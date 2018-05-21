@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>Silence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="前端, Web, Java" >
+    <meta name="description" content="个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="Silence" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+  <section class="container header-main">
+    <div class="logo">
+      <a href="/">
+        <div class="cover">
+          <div class="name">Silence</div>
+          <div class="description">世上有条唯一的路，除了你无人能走</div>
+        </div>
+      </a>
+    </div>
+    <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+    <!-- 导航栏 -->
+    <ul class="menu hidden" id="JELON__menu">
+      
+      <li rel="/page/2/index.html" class="item ">
+        <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+      </li>
+      
+      <li rel="/page/2/index.html" class="item ">
+        <a href="/archives/" title="归档" class="icon-drawer">&nbsp;归档</a>
+      </li>
+      
+      <li rel="/page/2/index.html" class="item ">
+        <a href="/about/" title="关于" class="icon-user-tie">&nbsp;关于</a>
+      </li>
+      
+      <li rel="/page/2/index.html" class="item ">
+        <a href="/atom.xml" title="RSS" class="icon-rss">&nbsp;RSS</a>
+      </li>
+      
+    </ul>
+    <!-- 搜索框 -->
+    <div id="search-box">
+      <div class="icon"><span class="icon-search"></span></div>
+      <div class="input-box"><input type="text" id="search-input" v-model="queryText" @focus="searchInit" placeholder="站内搜索"/></div>
+      <!-- 搜索结果区 -->
+      <div id="search-result-box" >
+        <ul class="search-result-list" v-if="searchResult.length && !searchIniting">
+          <li v-for="(article,index) in searchResult" :key="index">
+            <a :href='article.url' class='search-result-title' target='_blank'>{{article.title || '无标题'}}</a>
+            <p class="search-result" v-html="article.matchContent"></p>
+          </li>
+        </ul>
+        <div style="text-align:center" v-else-if="searchIniting">
+          <img src="/img/loading.gif" style="width:30px;height:30px"/>
+        </div>
+        <!-- 无匹配时显示 -->
+        <p class="search-result" v-else>没有搜索到任何结果</p>
+      </div>
+    </div>
+    <div class="profile clearfix">
+      <div class="feeds fl">
+        
+        
+        <p class="links">
+          
+            <a href="https://github.com/sookie2010" target="_blank">Github</a>
+            |
+          
+            <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+            
+          
+        </p>
+        <p class="sns">
+          
+            <a href="https://weibo.com/2633013641" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+          
+            <a href="https://www.facebook.com/profile.php?id=100016469831631" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+          
+        </p>
+        
+      </div>
+      <div class="avatar fr">
+        <img src="https://i.loli.net/2018/05/04/5aeb37415a0dc.jpg" alt="avatar" title="Sookie">
+      </div>
+    </div>
+  </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 首页 -->
+
+    <h3 class="widget-hd">
+  <strong>
+    
+      最近动态
+    
+  </strong>
+</h3>
+
+    <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 分类 -->
+        
+        <a class="cat-link" href="/categories/linux/">linux</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="https://sookie2010.github.io/linux/2.2、shell编程(3)-流程控制与函数/">
+    		2.2、shell编程(3)-流程控制与函数
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        柠烟夏季 发表于
+        <time datetime="2018-03-05T16:52:22.000Z">2018-03-06</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/linux/" title="linux">linux</a> / 
+    
+        <a href="/tags/shell/" title="shell">shell</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <h3 id="判断"><a href="#判断" class="headerlink" title="判断"></a>判断</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> condition1</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">  command1</span><br><span class="line"><span class="keyword">elif</span> condition2</span><br><span class="line"><span class="keyword">then</span> </span><br><span class="line">  command2</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  command3</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<p>如果else没有语句执行<br>则不能留空 , 最好直接不写这个else<br>
+            
+            <p class="more">
+                <a href="https://sookie2010.github.io/linux/2.2、shell编程(3)-流程控制与函数/">阅读全文</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="https://sookie2010.github.io/linux/2.2、shell编程(3)-流程控制与函数/" title="2.2、shell编程(3)-流程控制与函数">
+                
+                    <img class="thumbnail" src="/img/loading2.gif" data-echo="/img/thumbnail/9.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+    <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 分类 -->
+        
+        <a class="cat-link" href="/categories/linux/">linux</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="https://sookie2010.github.io/linux/2.0、shell编程(1)-初见/">
+    		2.0、shell编程(1)-初见
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        柠烟夏季 发表于
+        <time datetime="2018-03-05T14:38:32.000Z">2018-03-05</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/linux/" title="linux">linux</a> / 
+    
+        <a href="/tags/shell/" title="shell">shell</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p><code>shell</code>俗称为<strong>壳</strong> , 是指提供使用者使用界面的软件<br>也叫做命令解析器<br>接收用户的命令 , 然后调用相应的应用程序<br>(接收命令的方式可以是命令行 , 也可以是图形界面)<br>
+            
+            <p class="more">
+                <a href="https://sookie2010.github.io/linux/2.0、shell编程(1)-初见/">阅读全文</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="https://sookie2010.github.io/linux/2.0、shell编程(1)-初见/" title="2.0、shell编程(1)-初见">
+                
+                    <img class="thumbnail" src="/img/loading2.gif" data-echo="/img/thumbnail/7.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+    <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 分类 -->
+        
+        <a class="cat-link" href="/categories/linux/">linux</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="https://sookie2010.github.io/linux/2.1、shell编程(2)-从入门到重新入门/">
+    		2.1、shell编程(2)-从入门到重新入门
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        柠烟夏季 发表于
+        <time datetime="2018-03-04T16:52:22.000Z">2018-03-05</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/linux/" title="linux">linux</a> / 
+    
+        <a href="/tags/shell/" title="shell">shell</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <h3 id="传参"><a href="#传参" class="headerlink" title="传参"></a>传参</h3><p>在外部执行时可以给脚本传参<br>在脚本当中获取时 , <code>$0</code>是执行的文件路径<br><code>$1</code>代表第一个参数 , <code>$2</code>代表第二个参数 , 以此类推<br>
+            
+            <p class="more">
+                <a href="https://sookie2010.github.io/linux/2.1、shell编程(2)-从入门到重新入门/">阅读全文</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="https://sookie2010.github.io/linux/2.1、shell编程(2)-从入门到重新入门/" title="2.1、shell编程(2)-从入门到重新入门">
+                
+                    <img class="thumbnail" src="/img/loading2.gif" data-echo="/img/thumbnail/8.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+    <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 分类 -->
+        
+        <a class="cat-link" href="/categories/MongoDB/">MongoDB</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="https://sookie2010.github.io/MongoDB/7.0、使用浏览器访问MongoDB/">
+    		7.0、使用浏览器访问MongoDB
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        柠烟夏季 发表于
+        <time datetime="2018-02-16T12:42:18.000Z">2018-02-16</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/数据库/" title="数据库">数据库</a> / 
+    
+        <a href="/tags/MongoDB/" title="MongoDB">MongoDB</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p>MongoDB可以开启一个HTTP协议的端口提供REST服务 , 这个端口是数据库的服务端口加1000<br>比如数据库的服务端口是27017<br>那么开启REST服务之后 , 通过浏览器访问的端口就是28017<br>
+            
+            <p class="more">
+                <a href="https://sookie2010.github.io/MongoDB/7.0、使用浏览器访问MongoDB/">阅读全文</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="https://sookie2010.github.io/MongoDB/7.0、使用浏览器访问MongoDB/" title="7.0、使用浏览器访问MongoDB">
+                
+                    <img class="thumbnail" src="/img/loading2.gif" data-echo="/img/thumbnail/5.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+    <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 分类 -->
+        
+        <a class="cat-link" href="/categories/MongoDB/">MongoDB</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="https://sookie2010.github.io/MongoDB/6.1、快速搭建复制集/">
+    		6.1、快速搭建复制集
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        柠烟夏季 发表于
+        <time datetime="2018-02-11T11:47:03.000Z">2018-02-11</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/数据库/" title="数据库">数据库</a> / 
+    
+        <a href="/tags/MongoDB/" title="MongoDB">MongoDB</a> / 
+    
+        <a href="/tags/集群/" title="集群">集群</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p>在一个复制集当中 , 每个节点都需要具备独立的进程 , 所以要分别进行配置<br>这里需要用到几个重要的配置项<br>
+            
+            <p class="more">
+                <a href="https://sookie2010.github.io/MongoDB/6.1、快速搭建复制集/">阅读全文</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="https://sookie2010.github.io/MongoDB/6.1、快速搭建复制集/" title="6.1、快速搭建复制集">
+                
+                    <img class="thumbnail" src="/img/loading2.gif" data-echo="/img/thumbnail/7.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+    <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 分类 -->
+        
+        <a class="cat-link" href="/categories/MongoDB/">MongoDB</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="https://sookie2010.github.io/MongoDB/6.0、复制集/">
+    		6.0、复制集
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        柠烟夏季 发表于
+        <time datetime="2018-02-11T11:45:02.000Z">2018-02-11</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/数据库/" title="数据库">数据库</a> / 
+    
+        <a href="/tags/MongoDB/" title="MongoDB">MongoDB</a> / 
+    
+        <a href="/tags/集群/" title="集群">集群</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p>复制集是由一组拥有相同数据集的mongod实例所组成的<code>集群</code><br>
+            
+            <p class="more">
+                <a href="https://sookie2010.github.io/MongoDB/6.0、复制集/">阅读全文</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="https://sookie2010.github.io/MongoDB/6.0、复制集/" title="6.0、复制集">
+                
+                    <img class="thumbnail" src="/img/loading2.gif" data-echo="/img/thumbnail/4.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+    <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 分类 -->
+        
+        <a class="cat-link" href="/categories/linux/">linux</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="https://sookie2010.github.io/linux/3.3、Docker(3)-WordPress部署实践/">
+    		3.3、Docker(3)-部署wordpress实践
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        柠烟夏季 发表于
+        <time datetime="2018-02-10T14:38:32.000Z">2018-02-10</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/linux/" title="linux">linux</a> / 
+    
+        <a href="/tags/docker/" title="docker">docker</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p>站在 Docker 的角度，软件就是容器的组合：业务逻辑容器、数据库容器、储存容器、队列容器……Docker 使得软件可以拆分成若干个标准化容器，然后像搭积木一样组合起来。</p>
+<p>这正是微服务（microservices）的思想：软件把任务外包出去，让各种外部服务完成这些任务，软件本身只是底层服务的调度中心和组装层。<br>
+            
+            <p class="more">
+                <a href="https://sookie2010.github.io/linux/3.3、Docker(3)-WordPress部署实践/">阅读全文</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="https://sookie2010.github.io/linux/3.3、Docker(3)-WordPress部署实践/" title="3.3、Docker(3)-部署wordpress实践">
+                
+                    <img class="thumbnail" src="/img/loading2.gif" data-echo="/img/thumbnail/2.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+    <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 分类 -->
+        
+        <a class="cat-link" href="/categories/linux/">linux</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="https://sookie2010.github.io/linux/3.2、Docker(2)-使用技巧/">
+    		3.2、Docker(2)-使用技巧
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        柠烟夏季 发表于
+        <time datetime="2018-02-09T14:38:32.000Z">2018-02-09</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/linux/" title="linux">linux</a> / 
+    
+        <a href="/tags/docker/" title="docker">docker</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <h3 id="与宿主机共享网络"><a href="#与宿主机共享网络" class="headerlink" title="与宿主机共享网络"></a>与宿主机共享网络</h3><p>默认情况下 , 在宿主机可以根据容器暴露出的端口来访问容器中启动的服务<br>但是由于容器的隔离 , 在容器内部是无法访问宿主机的服务的<br>如果有这种需要 , 可以在启动容器的时候添加参数<code>--net=host</code></p>
+<p>作用就是使容器和宿主机共用网络<br>
+            
+            <p class="more">
+                <a href="https://sookie2010.github.io/linux/3.2、Docker(2)-使用技巧/">阅读全文</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="https://sookie2010.github.io/linux/3.2、Docker(2)-使用技巧/" title="3.2、Docker(2)-使用技巧">
+                
+                    <img class="thumbnail" src="/img/loading2.gif" data-echo="/img/thumbnail/0.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+    <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 分类 -->
+        
+        <a class="cat-link" href="/categories/linux/">linux</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="https://sookie2010.github.io/linux/3.1、Docker(1)-初见/">
+    		3.1、Docker(1)-初见
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        柠烟夏季 发表于
+        <time datetime="2018-02-08T14:38:32.000Z">2018-02-08</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/linux/" title="linux">linux</a> / 
+    
+        <a href="/tags/docker/" title="docker">docker</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p><strong>程序部署运维的痛点</strong><br>当今软件越发庞大复杂 , 在服务器部署运行一个软件之前通常需要完成:</p>
+<ol>
+<li>操作系统的设置</li>
+<li>各种库和组件的安装</li>
+</ol>
+<p>只有他们都正确 , 软件才能正常运行<br>当需要迁移的时候 , 这些事情都要重来一遍<br>并且由于各种原因 , 还可能会产生不一样的问题 , 费时费力<br>
+            
+            <p class="more">
+                <a href="https://sookie2010.github.io/linux/3.1、Docker(1)-初见/">阅读全文</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="https://sookie2010.github.io/linux/3.1、Docker(1)-初见/" title="3.1、Docker(1)-初见">
+                
+                    <img class="thumbnail" src="/img/loading2.gif" data-echo="/img/thumbnail/9.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+    <!-- 文章 -->
+<article class="post">
+    <header>
+        <!-- 分类 -->
+        
+        <a class="cat-link" href="/categories/MongoDB/">MongoDB</a>
+        
+        <!-- 文章标题 -->
+        
+    <h3 class="post-title">
+    	<a href="https://sookie2010.github.io/MongoDB/5.2、关联映射/">
+    		5.2、关联映射
+    	</a>
+    </h3>
+
+    </header>
+    <p class="post-meta">
+        柠烟夏季 发表于
+        <time datetime="2018-01-27T11:37:03.000Z">2018-01-27</time>
+        &nbsp;&nbsp;
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/数据库/" title="数据库">数据库</a> / 
+    
+        <a href="/tags/MongoDB/" title="MongoDB">MongoDB</a>
+    
+
+        </span>
+    </p>
+
+    <div class="post-content">
+        <div class="post-excerpt">
+            
+                <p>在Maven项目中引入marphia的包<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mongodb.morphia<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>morphia<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+            
+            <p class="more">
+                <a href="https://sookie2010.github.io/MongoDB/5.2、关联映射/">阅读全文</a>
+            </p>
+        </div>
+        <div class="post-thumbnail" data-img="">
+            <a href="https://sookie2010.github.io/MongoDB/5.2、关联映射/" title="5.2、关联映射">
+                
+                    <img class="thumbnail" src="/img/loading2.gif" data-echo="/img/thumbnail/2.jpg" alt="默认配图" >
+                
+            </a>
+        </div>
+    </div>
+</article>
+
+    
+
+
+<nav class="page-navigator">
+  <a class="extend prev" rel="prev" href="/">前一页</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/3/">后一页</a>
+</nav>
+
+
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/Java/">Java</a>
+        <span class="badge">10</span>
+    </li>
+    
+    <li>
+        <a href="/categories/JavaScript/">JavaScript</a>
+        <span class="badge">14</span>
+    </li>
+    
+    <li>
+        <a href="/categories/MongoDB/">MongoDB</a>
+        <span class="badge">16</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Git/">Git</a>
+        <span class="badge">4</span>
+    </li>
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">11</span>
+    </li>
+    
+    <li>
+        <a href="/categories/前端杂烩/">前端杂烩</a>
+        <span class="badge">16</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 标签云 -->
+<div class="tags-cloud">
+<a href="/tags/ECMAScript6/" style="font-size: 19.33px; color: #b6668f">ECMAScript6</a> <a href="/tags/HTML5/" style="font-size: 14px; color: #e87474">HTML5</a> <a href="/tags/Hexo/" style="font-size: 15.78px; color: #d76f7d">Hexo</a> <a href="/tags/JavaScript/" style="font-size: 28.22px; color: #634fbc">JavaScript</a> <a href="/tags/MongoDB/" style="font-size: 30px; color: #524ac5">MongoDB</a> <a href="/tags/Promise/" style="font-size: 15.78px; color: #d76f7d">Promise</a> <a href="/tags/css/" style="font-size: 22.89px; color: #955da1">css</a> <a href="/tags/docker/" style="font-size: 17.56px; color: #c76b86">docker</a> <a href="/tags/git/" style="font-size: 19.33px; color: #b6668f">git</a> <a href="/tags/linux/" style="font-size: 24.67px; color: #8458aa">linux</a> <a href="/tags/maven/" style="font-size: 21.11px; color: #a56198">maven</a> <a href="/tags/opencv/" style="font-size: 14px; color: #e87474">opencv</a> <a href="/tags/prototype/" style="font-size: 15.78px; color: #d76f7d">prototype</a> <a href="/tags/sass/" style="font-size: 17.56px; color: #c76b86">sass</a> <a href="/tags/shell/" style="font-size: 19.33px; color: #b6668f">shell</a> <a href="/tags/函数/" style="font-size: 15.78px; color: #d76f7d">函数</a> <a href="/tags/前端/" style="font-size: 26.44px; color: #7353b3">前端</a> <a href="/tags/数据库/" style="font-size: 30px; color: #524ac5">数据库</a> <a href="/tags/模块化/" style="font-size: 15.78px; color: #d76f7d">模块化</a> <a href="/tags/版本控制/" style="font-size: 19.33px; color: #b6668f">版本控制</a> <a href="/tags/索引/" style="font-size: 19.33px; color: #b6668f">索引</a> <a href="/tags/线程/" style="font-size: 14px; color: #e87474">线程</a> <a href="/tags/集群/" style="font-size: 15.78px; color: #d76f7d">集群</a>
+</div>
+    </section>
+    
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章归档</strong></h3>
+        <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">2018年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">2018年04月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">2018年03月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">2018年02月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">2018年01月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">2017年12月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">2017年11月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">2017年10月</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">2017年09月</a><span class="archive-list-count">7</span></li></ul>
+    </section>
+    
+
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Power By Hexo</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <script src="/js/main.js"></script>
+<script src="/js/lib/polyfill.min.js"></script>
+<script src="/js/lib/vue.min.js"></script>
+<script src="/js/lib/axios.min.js"></script>
+<script src="/js/local-search.js"></script>
+</body>
+</html>

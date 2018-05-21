@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>模块化编程(1) | Silence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="前端, Web, Java" >
+    <meta name="description" content="个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="Silence" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+  <section class="container header-main">
+    <div class="logo">
+      <a href="/">
+        <div class="cover">
+          <div class="name">Silence</div>
+          <div class="description">世上有条唯一的路，除了你无人能走</div>
+        </div>
+      </a>
+    </div>
+    <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+    <!-- 导航栏 -->
+    <ul class="menu hidden" id="JELON__menu">
+      
+      <li rel="/JavaScript/模块化编程(1)/index.html" class="item ">
+        <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+      </li>
+      
+      <li rel="/JavaScript/模块化编程(1)/index.html" class="item ">
+        <a href="/archives/" title="归档" class="icon-drawer">&nbsp;归档</a>
+      </li>
+      
+      <li rel="/JavaScript/模块化编程(1)/index.html" class="item ">
+        <a href="/about/" title="关于" class="icon-user-tie">&nbsp;关于</a>
+      </li>
+      
+      <li rel="/JavaScript/模块化编程(1)/index.html" class="item ">
+        <a href="/atom.xml" title="RSS" class="icon-rss">&nbsp;RSS</a>
+      </li>
+      
+    </ul>
+    <!-- 搜索框 -->
+    <div id="search-box">
+      <div class="icon"><span class="icon-search"></span></div>
+      <div class="input-box"><input type="text" id="search-input" v-model="queryText" @focus="searchInit" placeholder="站内搜索"/></div>
+      <!-- 搜索结果区 -->
+      <div id="search-result-box" >
+        <ul class="search-result-list" v-if="searchResult.length && !searchIniting">
+          <li v-for="(article,index) in searchResult" :key="index">
+            <a :href='article.url' class='search-result-title' target='_blank'>{{article.title || '无标题'}}</a>
+            <p class="search-result" v-html="article.matchContent"></p>
+          </li>
+        </ul>
+        <div style="text-align:center" v-else-if="searchIniting">
+          <img src="/img/loading.gif" style="width:30px;height:30px"/>
+        </div>
+        <!-- 无匹配时显示 -->
+        <p class="search-result" v-else>没有搜索到任何结果</p>
+      </div>
+    </div>
+    <div class="profile clearfix">
+      <div class="feeds fl">
+        
+        
+        <p class="links">
+          
+            <a href="https://github.com/sookie2010" target="_blank">Github</a>
+            |
+          
+            <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+            
+          
+        </p>
+        <p class="sns">
+          
+            <a href="https://weibo.com/2633013641" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+          
+            <a href="https://www.facebook.com/profile.php?id=100016469831631" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+          
+        </p>
+        
+      </div>
+      <div class="avatar fr">
+        <img src="https://i.loli.net/2018/05/04/5aeb37415a0dc.jpg" alt="avatar" title="Sookie">
+      </div>
+    </div>
+  </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>模块化编程(1)</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        柠烟夏季 发表于
+        <time datetime="2018-05-06T12:15:26.000Z">2018-05-06 20:15</time>
+    </p>
+    <div class="post-content">
+        <h4 id="准备知识"><a href="#准备知识" class="headerlink" title="准备知识"></a>准备知识</h4><blockquote>
+<p>网页中<code>&lt;script&gt;</code>标签</p>
+<ul>
+<li>如果是src引入一个文件的形式 , 加载这个文件的过程默认是同步的 , 如果引入了多个文件 , 则按照声明的顺序进行加载运行 , 前面的文件尚未加载运行完毕 , 不会加载后面的文件<a id="more"></a></li>
+<li>从src所指定的地址获取文件的动作是异步的 , 如果前面有未加载完成的脚本 , 那么该脚本即使已经获取到 , 也不会先加载运行</li>
+<li>给script标签添加<code>async=&quot;async&quot;</code>属性 , 可以指定这个脚本的加载运行以异步方式执行</li>
+<li>在IE当中 , 使用<code>defer</code>指定异步方式执行脚本</li>
+</ul>
+</blockquote>
+<p>例如 :<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://localhost:8080/test/demo1.js"</span> &gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://localhost:8080/test/demo2.js"</span> &gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>如果不加 defer async=”async” 的情况下 , demo1.js 和 demo2.js 会顺序加载运行 , 假如demo2.js当中有对demo1.js的依赖 , 那么这种情况下不会出现问题</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://localhost:8080/test/demo1.js"</span> <span class="attr">defer</span> <span class="attr">async</span>=<span class="string">"async"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"http://localhost:8080/test/demo2.js"</span> &gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果demo1.js由于文件庞大 网络不畅等原因加载缓慢 , 我们可以给demo1.js添加异步加载标识<br>这种情况下 , demo2.js将<strong>有可能</strong>先于demo1.js加载运行 , 如果存在依赖 , 将<strong>有可能</strong>报错</p>
+<hr>
+<h3 id="模块化的实现方式"><a href="#模块化的实现方式" class="headerlink" title="模块化的实现方式"></a>模块化的实现方式</h3><p>JS在很长一段时间内不是一种支持模块化编程的语言<br>虽然ES6正式支持了类和模块 , 在nodejs环境下的模块化编程没有问题<br>但是能够在浏览器环境中普遍使用还需要很长时间<br>所以需要采用其他的方法去模拟实现模块化</p>
+<h4 id="原始写法"><a href="#原始写法" class="headerlink" title="原始写法"></a>原始写法</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">func1</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">func2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将若干个函数简单堆积在一起 , 可以认为是一个模块<br>但是这种模式是将这些函数对象作为全局变量<br>如果函数很多 , 会造成全局变量的污染<br>与其他模块也可能发生变量的命名冲突问题</p>
+<h4 id="对象写法"><a href="#对象写法" class="headerlink" title="对象写法"></a>对象写法</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> module1 = &#123;</span><br><span class="line">  _count : <span class="number">0</span>,</span><br><span class="line">  up : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    _count ++;</span><br><span class="line">  &#125;,</span><br><span class="line">  down : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    _count --;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这种写法只讲一个对象作为全局变量 , 一定程度上避免了全局变量的污染<br>但是这种写法会暴露所有的模块成员 , 无法做到只有模块内部方法能够访问的局部变量</p>
+<h4 id="立即执行函数写法"><a href="#立即执行函数写法" class="headerlink" title="立即执行函数写法"></a>立即执行函数写法</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> module1 = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">var</span> _count = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    up : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      _count ++;</span><br><span class="line">    &#125;,</span><br><span class="line">    down : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      _count --;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p>这种写法 , 把模块内需要保护的变量作为函数的局部变量 , 在外部无法直接去访问<br>可以算是相对科学的写法了 , 之后的几种都是对这种写法的改造和扩展</p>
+<h4 id="放大模式"><a href="#放大模式" class="headerlink" title="放大模式"></a>放大模式</h4><p>如果一个模块需要分成几个部分写在不同的地方 , 或者说一个模块需要去继承另一个模块 , 就需要使用放大模式<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> module1 = (<span class="function"><span class="keyword">function</span>(<span class="params">mod</span>)</span>&#123;</span><br><span class="line">  mod.biz = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"我是另外加入的方法"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> mod;</span><br><span class="line">&#125;)(module1);</span><br></pre></td></tr></table></figure></p>
+<h4 id="宽放大模式"><a href="#宽放大模式" class="headerlink" title="宽放大模式"></a>宽放大模式</h4><p>上面的放大模式显然需要保证模块加载的先后顺序<br>如果传入的module1是undefined , 肯定会报错<br>然而部署在外网的项目 , 如果严格限制了模块的加载顺序 , 很容易造成页面加载缓慢<br>为了适应这种情况 , 可以采用宽放大模式<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> module1 = (<span class="function"><span class="keyword">function</span>(<span class="params">mod</span>)</span>&#123;</span><br><span class="line">  mod.biz = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"我是另外加入的方法"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> mod;</span><br><span class="line">&#125;)(module1 || &#123;&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>module1模块的两部分都采取这种写法 , 加载的先后就无所谓了<br>先加载的会在空对象上添加方法</p>
+<h4 id="输入全局变量"><a href="#输入全局变量" class="headerlink" title="输入全局变量"></a>输入全局变量</h4><p>一个模块最好能够是独立的 , 不与其他模块中的部分直接进行交互<br>但是如果在模块内需要其他模块产生的对象<br>可以显式地将这些对象输入到模块内部</p>
+<p>比如需要用到jQuery的对象<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> module1 = (<span class="function"><span class="keyword">function</span>(<span class="params">$</span>)</span>&#123;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">&#125;)(jQuery);</span><br></pre></td></tr></table></figure></p>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/JavaScript/">JavaScript</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/JavaScript/" title="JavaScript">JavaScript</a> / 
+    
+        <a href="/tags/模块化/" title="模块化">模块化</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      
+      <a href="javascript:void(0);" class="share-icon weibo" onclick="JELON.Utils.share('weibo')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qqzone" onclick="JELON.Utils.share('qqzone')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qq" onclick="JELON.Utils.share('qq')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon douban" onclick="JELON.Utils.share('douban')"></a>
+      
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/JavaScript/模块化编程(2)/">
+            
+                模块化编程(2)
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/JavaScript/Symbol/">
+            
+                生成器函数
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: 'JavaScript/模块化编程(1)' || 'JavaScript/模块化编程(1)/',
+    owner: 'sookie2010',
+    repo: 'hexo_blog',
+    clientId: '90e8f648da2a669f7975',
+    clientSecret: '7d2b602616387748ef0df10f7a8a626bdfd1034c'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/Java/">Java</a>
+        <span class="badge">10</span>
+    </li>
+    
+    <li>
+        <a href="/categories/JavaScript/">JavaScript</a>
+        <span class="badge">14</span>
+    </li>
+    
+    <li>
+        <a href="/categories/MongoDB/">MongoDB</a>
+        <span class="badge">16</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Git/">Git</a>
+        <span class="badge">4</span>
+    </li>
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">11</span>
+    </li>
+    
+    <li>
+        <a href="/categories/前端杂烩/">前端杂烩</a>
+        <span class="badge">16</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 标签云 -->
+<div class="tags-cloud">
+<a href="/tags/ECMAScript6/" style="font-size: 19.33px; color: #b6668f">ECMAScript6</a> <a href="/tags/HTML5/" style="font-size: 14px; color: #e87474">HTML5</a> <a href="/tags/Hexo/" style="font-size: 15.78px; color: #d76f7d">Hexo</a> <a href="/tags/JavaScript/" style="font-size: 28.22px; color: #634fbc">JavaScript</a> <a href="/tags/MongoDB/" style="font-size: 30px; color: #524ac5">MongoDB</a> <a href="/tags/Promise/" style="font-size: 15.78px; color: #d76f7d">Promise</a> <a href="/tags/css/" style="font-size: 22.89px; color: #955da1">css</a> <a href="/tags/docker/" style="font-size: 17.56px; color: #c76b86">docker</a> <a href="/tags/git/" style="font-size: 19.33px; color: #b6668f">git</a> <a href="/tags/linux/" style="font-size: 24.67px; color: #8458aa">linux</a> <a href="/tags/maven/" style="font-size: 21.11px; color: #a56198">maven</a> <a href="/tags/opencv/" style="font-size: 14px; color: #e87474">opencv</a> <a href="/tags/prototype/" style="font-size: 15.78px; color: #d76f7d">prototype</a> <a href="/tags/sass/" style="font-size: 17.56px; color: #c76b86">sass</a> <a href="/tags/shell/" style="font-size: 19.33px; color: #b6668f">shell</a> <a href="/tags/函数/" style="font-size: 15.78px; color: #d76f7d">函数</a> <a href="/tags/前端/" style="font-size: 26.44px; color: #7353b3">前端</a> <a href="/tags/数据库/" style="font-size: 30px; color: #524ac5">数据库</a> <a href="/tags/模块化/" style="font-size: 15.78px; color: #d76f7d">模块化</a> <a href="/tags/版本控制/" style="font-size: 19.33px; color: #b6668f">版本控制</a> <a href="/tags/索引/" style="font-size: 19.33px; color: #b6668f">索引</a> <a href="/tags/线程/" style="font-size: 14px; color: #e87474">线程</a> <a href="/tags/集群/" style="font-size: 15.78px; color: #d76f7d">集群</a>
+</div>
+    </section>
+    
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章归档</strong></h3>
+        <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">2018年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">2018年04月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">2018年03月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">2018年02月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">2018年01月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">2017年12月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">2017年11月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">2017年10月</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">2017年09月</a><span class="archive-list-count">7</span></li></ul>
+    </section>
+    
+
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Power By Hexo</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <script src="/js/main.js"></script>
+<script src="/js/lib/polyfill.min.js"></script>
+<script src="/js/lib/vue.min.js"></script>
+<script src="/js/lib/axios.min.js"></script>
+<script src="/js/local-search.js"></script>
+</body>
+</html>

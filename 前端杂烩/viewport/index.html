@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>viewport | Silence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="前端, Web, Java" >
+    <meta name="description" content="个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="Silence" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+  <section class="container header-main">
+    <div class="logo">
+      <a href="/">
+        <div class="cover">
+          <div class="name">Silence</div>
+          <div class="description">世上有条唯一的路，除了你无人能走</div>
+        </div>
+      </a>
+    </div>
+    <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+    <!-- 导航栏 -->
+    <ul class="menu hidden" id="JELON__menu">
+      
+      <li rel="/前端杂烩/viewport/index.html" class="item ">
+        <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+      </li>
+      
+      <li rel="/前端杂烩/viewport/index.html" class="item ">
+        <a href="/archives/" title="归档" class="icon-drawer">&nbsp;归档</a>
+      </li>
+      
+      <li rel="/前端杂烩/viewport/index.html" class="item ">
+        <a href="/about/" title="关于" class="icon-user-tie">&nbsp;关于</a>
+      </li>
+      
+      <li rel="/前端杂烩/viewport/index.html" class="item ">
+        <a href="/atom.xml" title="RSS" class="icon-rss">&nbsp;RSS</a>
+      </li>
+      
+    </ul>
+    <!-- 搜索框 -->
+    <div id="search-box">
+      <div class="icon"><span class="icon-search"></span></div>
+      <div class="input-box"><input type="text" id="search-input" v-model="queryText" @focus="searchInit" placeholder="站内搜索"/></div>
+      <!-- 搜索结果区 -->
+      <div id="search-result-box" >
+        <ul class="search-result-list" v-if="searchResult.length && !searchIniting">
+          <li v-for="(article,index) in searchResult" :key="index">
+            <a :href='article.url' class='search-result-title' target='_blank'>{{article.title || '无标题'}}</a>
+            <p class="search-result" v-html="article.matchContent"></p>
+          </li>
+        </ul>
+        <div style="text-align:center" v-else-if="searchIniting">
+          <img src="/img/loading.gif" style="width:30px;height:30px"/>
+        </div>
+        <!-- 无匹配时显示 -->
+        <p class="search-result" v-else>没有搜索到任何结果</p>
+      </div>
+    </div>
+    <div class="profile clearfix">
+      <div class="feeds fl">
+        
+        
+        <p class="links">
+          
+            <a href="https://github.com/sookie2010" target="_blank">Github</a>
+            |
+          
+            <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+            
+          
+        </p>
+        <p class="sns">
+          
+            <a href="https://weibo.com/2633013641" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+          
+            <a href="https://www.facebook.com/profile.php?id=100016469831631" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+          
+        </p>
+        
+      </div>
+      <div class="avatar fr">
+        <img src="https://i.loli.net/2018/05/04/5aeb37415a0dc.jpg" alt="avatar" title="Sookie">
+      </div>
+    </div>
+  </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>viewport</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        柠烟夏季 发表于
+        <time datetime="2017-09-09T03:01:56.000Z">2017-09-09 11:01</time>
+    </p>
+    <div class="post-content">
+        <p>在移动设备上的页面开发 , 首先需要搞清楚的就是<code>viewport</code> , 这是适配和响应各种不同分辨率的移动设备的前提条件</p>
+<h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p>通俗地讲 , 移动设备上的viewport是指设备的屏幕上能用来显示网页的那块区域<br><a id="more"></a></p>
+<blockquote>
+<p>关于<strong>像素(px)</strong><br>这是css当中常见的定义像素值的单位<br>但是这个值并不能完全等同于设备的物理像素<br>因为页面是可以被缩放的 , 如果缩放到2倍<br>那么1px在页面上就会占用2个物理像素的距离</p>
+</blockquote>
+<h4 id="移动设备的3个viewport"><a href="#移动设备的3个viewport" class="headerlink" title="移动设备的3个viewport"></a>移动设备的3个viewport</h4><h5 id="layout-viewport"><a href="#layout-viewport" class="headerlink" title="layout viewport"></a>layout viewport</h5><p><img src="/images/前端杂烩/viewport1.png" alt="layout viewport"><br>它的宽度是大于浏览器可视区域的宽度的<br>宽度值可以通过<code>document.documentElement.clientWidth</code>来获取<br>还需要一个viewport来代表浏览器可视区域的大小</p>
+<h5 id="visual-viewport"><a href="#visual-viewport" class="headerlink" title="visual viewport"></a>visual viewport</h5><p><img src="/images/前端杂烩/viewport2.png" alt="visual viewport"><br>它的宽度可以通过<code>window.innerWidth</code>来获取</p>
+<p>现在已经有两个viewport了 , 但是浏览器还觉得不够 , 因为越来越多的网站都会为移动设备进行单独的设计 , 所以还必须要有一个能完美适配移动设备的viewport</p>
+<blockquote>
+<p>完美适配指的是 : </p>
+<ol>
+<li>不需要用户缩放和横向滚动条就能正常地查看网页的所有内容</li>
+<li>显示的文字大小合适 , 不会因为在高密度像素的屏幕里显示得太小而无法看清 . 当然不只是文字 , 其他元素的大小也是同样的道理</li>
+</ol>
+</blockquote>
+<h5 id="ideal-viewport"><a href="#ideal-viewport" class="headerlink" title="ideal viewport"></a>ideal viewport</h5><p>这是移动设备的理想viewport , 它并没有一个固定的尺寸 , 不同的设备有不同的尺寸<br>例如所有iphone设备的ideal viewport的宽度都是320px , 无论它的屏幕宽度是320还是640<br>安卓设备则比较复杂 , 有很多不同的值<br>页面中元素大小如果根据ideal viewport来适配 , 则不会出现在像素密度太高的屏幕上 , 元素显示太小的问题了</p>
+<h4 id="利用meta标签对viewport进行控制"><a href="#利用meta标签对viewport进行控制" class="headerlink" title="利用meta标签对viewport进行控制"></a>利用meta标签对viewport进行控制</h4><p>移动设备默认的viewport是layout viewport , 但是在进行移动设备网站的开发时 , 我们需要的是ideal viewport<br>通常需要在head标签当中添加<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"</span> /&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>属性说明 : </p>
+<ul>
+<li><code>width</code> - 控制viewport宽度 , 可以指定一个值 , 或者特殊的值 , <strong>device-width</strong>为设备的宽度</li>
+<li><code>height</code> - 与width相对应 , 指定高度 , 这个属性并不重要 , 很少使用</li>
+<li><code>initial-scale</code> - 初始缩放比例 , 比如1.0</li>
+<li><code>maximum-scale</code> - 允许用户缩放到的最大比例</li>
+<li><code>minimum-scale</code> - 允许用户缩放到的最小比例</li>
+<li><code>user-scalable</code> - 用户是否可以手动缩放 , 值为yes或者no</li>
+</ul>
+<p>要得到ideal viewport只需要把width设置为<strong>device-width</strong>即可<br>需要说明的是 , 有关缩放的属性都是相对于ideal viewport进行缩放的<br>所以如果只写<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"viewport"</span> <span class="attr">content</span>=<span class="string">"initial-scale=1"</span> /&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>也可以达到ideal viewport的效果</p>
+<hr>
+<h4 id="视区的相关单位"><a href="#视区的相关单位" class="headerlink" title="视区的相关单位"></a>视区的相关单位</h4><ul>
+<li><code>vw</code> - 相对于视区的宽度 , 视区总的宽度为100vw</li>
+<li><code>vh</code> - 相对于视区的高度 , 视区总的高度为100vh</li>
+<li><code>vmin</code> - 相对于视区的宽度与高度当中较小的一个</li>
+<li><code>vmax</code> - 相对于视区的宽度与高度当中较大的一个</li>
+</ul>
+<p>比如某种情况下视区的宽度为1000px<br>div的width为2vw , 那么这个div的实际显示宽度就是20px<br>高度同理</p>
+<h5 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h5><ol>
+<li>弹性布局</li>
+</ol>
+<p>实践当中 , 如果我们需要把两个元素横向并排布局<br>设置浮动之后 , 分别指定宽度为25%与75%<br>与指定宽度为 25vw和75vw<br>相比并没有什么优势 , 实际的作用也是一样的</p>
+<p>在布局方面要发挥更大的作用 , 需要结合一个CSS的函数<code>calc</code><br>就是calculate的缩写<br>这个函数的作用是<strong>执行表达式的计算</strong></p>
+<p>如果不使用这个函数 , 我们通常是需要使用一些预处理工具 , 比如sass , 才能在css当中编写表达式<br>让预处理工具在打包css代码的过程中完成这个计算<br>但是这样终究比较局限 , 因为视区的宽度高度是页面实际渲染的时候才确定的<br>如果涉及到视区的计算 , 则无法完成</p>
+<p>回到最初的问题 , 按照宽度的百分比横向排列两个div<br>直接用百分比当然是可以的 , 但是如果这个元素有 <strong>border margin padding</strong>当中的任意一个 , 右边的div就会被挤到下一行<br>( 如果是单个元素宽度100%的话 , 盒子会被撑破 , 超出父元素的宽度 )</p>
+<p>这时候我们就可以用calc函数配合vw来解决这个问题<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.left</span>,<span class="selector-class">.right</span> &#123;</span><br><span class="line">  <span class="attribute">height </span>: <span class="number">600px</span>;</span><br><span class="line">  <span class="attribute">border </span>: <span class="number">3px</span> solid black;</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.left</span> &#123;</span><br><span class="line">  <span class="attribute">background </span>: blue;</span><br><span class="line">  <span class="attribute">width </span>: <span class="built_in">calc</span>(25vw - 6px);</span><br><span class="line">&#125;</span><br><span class="line"><span class="selector-class">.right</span> &#123;</span><br><span class="line">  <span class="attribute">background </span>: pink;</span><br><span class="line">  <span class="attribute">width </span>: <span class="built_in">calc</span>(75vw - 6px);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>出于兼容性的考虑 , 最好给calc加上<code>-webkit-</code>和<code>-moz-</code>的前缀</p>
+</blockquote>
+<ol start="2">
+<li>弹性字体</li>
+</ol>
+<p>在响应式布局中 , 字体的大小最好是能跟随视区的大小进行自动调整<br>才能达到比较好的体验<br>可以采用如下方式<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-pseudo">:root</span> &#123;</span><br><span class="line">  <span class="attribute">font-size</span>: <span class="built_in">calc</span>(1vw + 1vh + .5vmin);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>:root</code>伪类匹配DOM文档树的根元素 </p>
+<blockquote>
+<p><strong>补充说明</strong><br>使用视区的相关单位的值对应的属性 , 不会跟随页面的缩放变化<br>比如第二个例子当中的字号<br>在放大页面的时候 , 文字的大小是不会改变的</p>
+</blockquote>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/前端杂烩/">前端杂烩</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/前端/" title="前端">前端</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      
+      <a href="javascript:void(0);" class="share-icon weibo" onclick="JELON.Utils.share('weibo')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qqzone" onclick="JELON.Utils.share('qqzone')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qq" onclick="JELON.Utils.share('qq')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon douban" onclick="JELON.Utils.share('douban')"></a>
+      
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/Java/HashMap的工作原理/">
+            
+                HashMap的工作原理
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/前端杂烩/响应式布局/">
+            
+                响应式布局
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: '前端杂烩/viewport' || '前端杂烩/viewport/',
+    owner: 'sookie2010',
+    repo: 'hexo_blog',
+    clientId: '90e8f648da2a669f7975',
+    clientSecret: '7d2b602616387748ef0df10f7a8a626bdfd1034c'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/Java/">Java</a>
+        <span class="badge">10</span>
+    </li>
+    
+    <li>
+        <a href="/categories/JavaScript/">JavaScript</a>
+        <span class="badge">14</span>
+    </li>
+    
+    <li>
+        <a href="/categories/MongoDB/">MongoDB</a>
+        <span class="badge">16</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Git/">Git</a>
+        <span class="badge">4</span>
+    </li>
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">11</span>
+    </li>
+    
+    <li>
+        <a href="/categories/前端杂烩/">前端杂烩</a>
+        <span class="badge">16</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 标签云 -->
+<div class="tags-cloud">
+<a href="/tags/ECMAScript6/" style="font-size: 19.33px; color: #b6668f">ECMAScript6</a> <a href="/tags/HTML5/" style="font-size: 14px; color: #e87474">HTML5</a> <a href="/tags/Hexo/" style="font-size: 15.78px; color: #d76f7d">Hexo</a> <a href="/tags/JavaScript/" style="font-size: 28.22px; color: #634fbc">JavaScript</a> <a href="/tags/MongoDB/" style="font-size: 30px; color: #524ac5">MongoDB</a> <a href="/tags/Promise/" style="font-size: 15.78px; color: #d76f7d">Promise</a> <a href="/tags/css/" style="font-size: 22.89px; color: #955da1">css</a> <a href="/tags/docker/" style="font-size: 17.56px; color: #c76b86">docker</a> <a href="/tags/git/" style="font-size: 19.33px; color: #b6668f">git</a> <a href="/tags/linux/" style="font-size: 24.67px; color: #8458aa">linux</a> <a href="/tags/maven/" style="font-size: 21.11px; color: #a56198">maven</a> <a href="/tags/opencv/" style="font-size: 14px; color: #e87474">opencv</a> <a href="/tags/prototype/" style="font-size: 15.78px; color: #d76f7d">prototype</a> <a href="/tags/sass/" style="font-size: 17.56px; color: #c76b86">sass</a> <a href="/tags/shell/" style="font-size: 19.33px; color: #b6668f">shell</a> <a href="/tags/函数/" style="font-size: 15.78px; color: #d76f7d">函数</a> <a href="/tags/前端/" style="font-size: 26.44px; color: #7353b3">前端</a> <a href="/tags/数据库/" style="font-size: 30px; color: #524ac5">数据库</a> <a href="/tags/模块化/" style="font-size: 15.78px; color: #d76f7d">模块化</a> <a href="/tags/版本控制/" style="font-size: 19.33px; color: #b6668f">版本控制</a> <a href="/tags/索引/" style="font-size: 19.33px; color: #b6668f">索引</a> <a href="/tags/线程/" style="font-size: 14px; color: #e87474">线程</a> <a href="/tags/集群/" style="font-size: 15.78px; color: #d76f7d">集群</a>
+</div>
+    </section>
+    
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章归档</strong></h3>
+        <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">2018年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">2018年04月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">2018年03月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">2018年02月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">2018年01月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">2017年12月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">2017年11月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">2017年10月</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">2017年09月</a><span class="archive-list-count">7</span></li></ul>
+    </section>
+    
+
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Power By Hexo</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <script src="/js/main.js"></script>
+<script src="/js/lib/polyfill.min.js"></script>
+<script src="/js/lib/vue.min.js"></script>
+<script src="/js/lib/axios.min.js"></script>
+<script src="/js/local-search.js"></script>
+</body>
+</html>

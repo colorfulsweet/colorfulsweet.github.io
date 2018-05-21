@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>3.3、Docker(3)-部署wordpress实践 | Silence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="前端, Web, Java" >
+    <meta name="description" content="个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="Silence" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+  <section class="container header-main">
+    <div class="logo">
+      <a href="/">
+        <div class="cover">
+          <div class="name">Silence</div>
+          <div class="description">世上有条唯一的路，除了你无人能走</div>
+        </div>
+      </a>
+    </div>
+    <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+    <!-- 导航栏 -->
+    <ul class="menu hidden" id="JELON__menu">
+      
+      <li rel="/linux/3.3、Docker(3)-WordPress部署实践/index.html" class="item ">
+        <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+      </li>
+      
+      <li rel="/linux/3.3、Docker(3)-WordPress部署实践/index.html" class="item ">
+        <a href="/archives/" title="归档" class="icon-drawer">&nbsp;归档</a>
+      </li>
+      
+      <li rel="/linux/3.3、Docker(3)-WordPress部署实践/index.html" class="item ">
+        <a href="/about/" title="关于" class="icon-user-tie">&nbsp;关于</a>
+      </li>
+      
+      <li rel="/linux/3.3、Docker(3)-WordPress部署实践/index.html" class="item ">
+        <a href="/atom.xml" title="RSS" class="icon-rss">&nbsp;RSS</a>
+      </li>
+      
+    </ul>
+    <!-- 搜索框 -->
+    <div id="search-box">
+      <div class="icon"><span class="icon-search"></span></div>
+      <div class="input-box"><input type="text" id="search-input" v-model="queryText" @focus="searchInit" placeholder="站内搜索"/></div>
+      <!-- 搜索结果区 -->
+      <div id="search-result-box" >
+        <ul class="search-result-list" v-if="searchResult.length && !searchIniting">
+          <li v-for="(article,index) in searchResult" :key="index">
+            <a :href='article.url' class='search-result-title' target='_blank'>{{article.title || '无标题'}}</a>
+            <p class="search-result" v-html="article.matchContent"></p>
+          </li>
+        </ul>
+        <div style="text-align:center" v-else-if="searchIniting">
+          <img src="/img/loading.gif" style="width:30px;height:30px"/>
+        </div>
+        <!-- 无匹配时显示 -->
+        <p class="search-result" v-else>没有搜索到任何结果</p>
+      </div>
+    </div>
+    <div class="profile clearfix">
+      <div class="feeds fl">
+        
+        
+        <p class="links">
+          
+            <a href="https://github.com/sookie2010" target="_blank">Github</a>
+            |
+          
+            <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+            
+          
+        </p>
+        <p class="sns">
+          
+            <a href="https://weibo.com/2633013641" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+          
+            <a href="https://www.facebook.com/profile.php?id=100016469831631" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+          
+        </p>
+        
+      </div>
+      <div class="avatar fr">
+        <img src="https://i.loli.net/2018/05/04/5aeb37415a0dc.jpg" alt="avatar" title="Sookie">
+      </div>
+    </div>
+  </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>3.3、Docker(3)-部署wordpress实践</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        柠烟夏季 发表于
+        <time datetime="2018-02-10T14:38:32.000Z">2018-02-10 22:38</time>
+    </p>
+    <div class="post-content">
+        <p>站在 Docker 的角度，软件就是容器的组合：业务逻辑容器、数据库容器、储存容器、队列容器……Docker 使得软件可以拆分成若干个标准化容器，然后像搭积木一样组合起来。</p>
+<p>这正是微服务（microservices）的思想：软件把任务外包出去，让各种外部服务完成这些任务，软件本身只是底层服务的调度中心和组装层。<br><a id="more"></a><br><img src="/images/linux/20180505231057.png" alt="微服务"></p>
+<p>微服务很适合用 Docker 容器实现，每个容器承载一个服务。一台计算机同时运行多个容器，从而就能很轻松地模拟出复杂的微服务架构。</p>
+<p><img src="/images/linux/20180505231120.png" alt="应用解耦"></p>
+<p>现在尝试实践搭建一个wordpress的服务<br>这是一个php编写的博客系统</p>
+<p>运行需要依赖的环境有 : mysql  php  apache<br>当然也包括php的扩展包mysqli , 用于实现mysql数据库的连接</p>
+<h3 id="自建wordpress容器"><a href="#自建wordpress容器" class="headerlink" title="自建wordpress容器"></a>自建wordpress容器</h3><h4 id="尝试启动一个php-apache容器"><a href="#尝试启动一个php-apache容器" class="headerlink" title="尝试启动一个php-apache容器"></a>尝试启动一个php-apache容器</h4><p>创建应用目录 php-demo , 然后进入该目录执行<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker container run \</span><br><span class="line">-d \</span><br><span class="line">--rm \</span><br><span class="line">--name wordpress \</span><br><span class="line">--volume <span class="string">"<span class="variable">$PWD</span>/"</span>:/var/www/html \</span><br><span class="line">php:7.2-apache</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>linux当中 , 命令末尾的<code>\</code>代表换行继续输入命令 , 而不立即执行</p>
+</blockquote>
+<ul>
+<li><code>-d</code> : 容器在后台运行 , 输出内容不会打印到终端(可以用docker logs [ContainerId]查看)</li>
+<li><code>--rm</code> : 容器运行停止后 , 自动删除容器文件</li>
+<li><code>--name</code> : 指定容器的名字</li>
+<li><code>--volume</code> : 指定目录映射 , 这里表示把当前目录映射到容器内的/var/www/html目录<br>这个目录是apache服务器对外访问的默认目录<br>这样我们就可以直接在当前目录中添加php页面文件进行访问</li>
+</ul>
+<p>成功从远程仓库下载<strong>php:7.2-apache</strong>镜像并启动容器之后<br>会提示容器对外访问的IP地址 , 比如<strong>172.17.0.2</strong> , 可以直接访问这个地址</p>
+<p>但是此时还没有在访问目录中添加php页面<br>可以写个测试页面index.php<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">phpinfo();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>此时再访问就可以看到php信息了</p>
+<h4 id="安装wordpress"><a href="#安装wordpress" class="headerlink" title="安装wordpress"></a>安装wordpress</h4><p>删掉index.php<br>官网下载wordpress安装包 , 直接解压到该目录下<br>然后访问就可以看到wordpress的初始化页面了<br><img src="/images/linux/wordpress_init.png" alt="wordpress_init"><br>但是目前还没有mysql的容器</p>
+<h4 id="运行mysql容器"><a href="#运行mysql容器" class="headerlink" title="运行mysql容器"></a>运行mysql容器</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker container run \</span><br><span class="line">-d \</span><br><span class="line">--rm \</span><br><span class="line">--name wordpressdb \</span><br><span class="line">--env MYSQL_ROOT_PASSWORD=123456 \</span><br><span class="line">--env MYSQL_DATABASE=wordpress \</span><br><span class="line">mysql:5.7</span><br></pre></td></tr></table></figure>
+<p><code>env</code>代表向容器中传入的环境变量 , 容器中的mysql会根据环境变量创建数据库以及设置root用户的密码</p>
+<h4 id="添加mysqli扩展"><a href="#添加mysqli扩展" class="headerlink" title="添加mysqli扩展"></a>添加mysqli扩展</h4><p>PHP 的官方 image 不带有 mysqli 扩展，必须自己新建一个image</p>
+<p>新建<code>Dockerfile</code>文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FROM php:7.2-apache</span><br><span class="line">RUN docker-php-ext-install mysqli</span><br><span class="line">CMD apache2-foreground</span><br></pre></td></tr></table></figure></p>
+<p>打包镜像时安装mysqli的扩展 , 运行容器时启动apache<br>之后构建image<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t php-with-mysql .</span><br></pre></td></tr></table></figure></p>
+<h4 id="运行php-with-mysql"><a href="#运行php-with-mysql" class="headerlink" title="运行php-with-mysql"></a>运行php-with-mysql</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">docker container run \</span><br><span class="line">-d \</span><br><span class="line">--rm \</span><br><span class="line">--volume <span class="string">"<span class="variable">$PWD</span>/"</span>:/var/www/html \</span><br><span class="line">--link wordpressdb:mysqlhost \</span><br><span class="line">php-with-mysql</span><br></pre></td></tr></table></figure>
+<p>link是实现容器之间通信的一种机制 , 表示该容器要链接到<strong>wordpressdb</strong>容器 , 冒号表示该容器主机的名称是<strong>mysqlhost</strong><br>(之后配置数据库连接时 , 主机名称不是localhost , 而是<strong>mysqlhost</strong>)</p>
+<p>由于wordpress在运行时需要写入配置文件( 也包括自身版本的更新 )<br>我们可以给当前目录添加写权限<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod -R 777 ./</span><br></pre></td></tr></table></figure></p>
+<p>之后再访问172.17.0.2 , 填写数据库配置信息即可完成</p>
+<h3 id="使用wordpress官方镜像"><a href="#使用wordpress官方镜像" class="headerlink" title="使用wordpress官方镜像"></a>使用wordpress官方镜像</h3><p>首先仍然是要启动mysql的容器 , 参考上面的<strong>运行mysql容器</strong><br>然后使用wordpress的官方镜像构建容器<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker container run \</span><br><span class="line">-d \</span><br><span class="line">--rm \</span><br><span class="line">--name wordpress \</span><br><span class="line">--env WORDPRESS_DB_PASSWORD=123456 \</span><br><span class="line">--link wordpressdb:mysqlhost \</span><br><span class="line">wordpress</span><br></pre></td></tr></table></figure></p>
+<p>环境变量<code>WORDPRESS_DB_PASSWORD</code>是 MySQL 容器的根密码<br>运行之后的访问和初始化操作和前一种方式相同</p>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/linux/">linux</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/linux/" title="linux">linux</a> / 
+    
+        <a href="/tags/docker/" title="docker">docker</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      
+      <a href="javascript:void(0);" class="share-icon weibo" onclick="JELON.Utils.share('weibo')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qqzone" onclick="JELON.Utils.share('qqzone')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qq" onclick="JELON.Utils.share('qq')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon douban" onclick="JELON.Utils.share('douban')"></a>
+      
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/MongoDB/6.0、复制集/">
+            
+                6.0、复制集
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/linux/3.2、Docker(2)-使用技巧/">
+            
+                3.2、Docker(2)-使用技巧
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: 'linux/3.3、Docker(3)-WordPress部署实践' || 'linux/3.3、Docker(3)-WordPress部署实践/',
+    owner: 'sookie2010',
+    repo: 'hexo_blog',
+    clientId: '90e8f648da2a669f7975',
+    clientSecret: '7d2b602616387748ef0df10f7a8a626bdfd1034c'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/Java/">Java</a>
+        <span class="badge">10</span>
+    </li>
+    
+    <li>
+        <a href="/categories/JavaScript/">JavaScript</a>
+        <span class="badge">14</span>
+    </li>
+    
+    <li>
+        <a href="/categories/MongoDB/">MongoDB</a>
+        <span class="badge">16</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Git/">Git</a>
+        <span class="badge">4</span>
+    </li>
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">11</span>
+    </li>
+    
+    <li>
+        <a href="/categories/前端杂烩/">前端杂烩</a>
+        <span class="badge">16</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 标签云 -->
+<div class="tags-cloud">
+<a href="/tags/ECMAScript6/" style="font-size: 19.33px; color: #b6668f">ECMAScript6</a> <a href="/tags/HTML5/" style="font-size: 14px; color: #e87474">HTML5</a> <a href="/tags/Hexo/" style="font-size: 15.78px; color: #d76f7d">Hexo</a> <a href="/tags/JavaScript/" style="font-size: 28.22px; color: #634fbc">JavaScript</a> <a href="/tags/MongoDB/" style="font-size: 30px; color: #524ac5">MongoDB</a> <a href="/tags/Promise/" style="font-size: 15.78px; color: #d76f7d">Promise</a> <a href="/tags/css/" style="font-size: 22.89px; color: #955da1">css</a> <a href="/tags/docker/" style="font-size: 17.56px; color: #c76b86">docker</a> <a href="/tags/git/" style="font-size: 19.33px; color: #b6668f">git</a> <a href="/tags/linux/" style="font-size: 24.67px; color: #8458aa">linux</a> <a href="/tags/maven/" style="font-size: 21.11px; color: #a56198">maven</a> <a href="/tags/opencv/" style="font-size: 14px; color: #e87474">opencv</a> <a href="/tags/prototype/" style="font-size: 15.78px; color: #d76f7d">prototype</a> <a href="/tags/sass/" style="font-size: 17.56px; color: #c76b86">sass</a> <a href="/tags/shell/" style="font-size: 19.33px; color: #b6668f">shell</a> <a href="/tags/函数/" style="font-size: 15.78px; color: #d76f7d">函数</a> <a href="/tags/前端/" style="font-size: 26.44px; color: #7353b3">前端</a> <a href="/tags/数据库/" style="font-size: 30px; color: #524ac5">数据库</a> <a href="/tags/模块化/" style="font-size: 15.78px; color: #d76f7d">模块化</a> <a href="/tags/版本控制/" style="font-size: 19.33px; color: #b6668f">版本控制</a> <a href="/tags/索引/" style="font-size: 19.33px; color: #b6668f">索引</a> <a href="/tags/线程/" style="font-size: 14px; color: #e87474">线程</a> <a href="/tags/集群/" style="font-size: 15.78px; color: #d76f7d">集群</a>
+</div>
+    </section>
+    
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章归档</strong></h3>
+        <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">2018年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">2018年04月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">2018年03月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">2018年02月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">2018年01月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">2017年12月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">2017年11月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">2017年10月</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">2017年09月</a><span class="archive-list-count">7</span></li></ul>
+    </section>
+    
+
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Power By Hexo</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <script src="/js/main.js"></script>
+<script src="/js/lib/polyfill.min.js"></script>
+<script src="/js/lib/vue.min.js"></script>
+<script src="/js/lib/axios.min.js"></script>
+<script src="/js/local-search.js"></script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>2.2、shell编程(3)-流程控制与函数 | Silence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="前端, Web, Java" >
+    <meta name="description" content="个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="Silence" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+  <section class="container header-main">
+    <div class="logo">
+      <a href="/">
+        <div class="cover">
+          <div class="name">Silence</div>
+          <div class="description">世上有条唯一的路，除了你无人能走</div>
+        </div>
+      </a>
+    </div>
+    <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+    <!-- 导航栏 -->
+    <ul class="menu hidden" id="JELON__menu">
+      
+      <li rel="/linux/2.2、shell编程(3)-流程控制与函数/index.html" class="item ">
+        <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+      </li>
+      
+      <li rel="/linux/2.2、shell编程(3)-流程控制与函数/index.html" class="item ">
+        <a href="/archives/" title="归档" class="icon-drawer">&nbsp;归档</a>
+      </li>
+      
+      <li rel="/linux/2.2、shell编程(3)-流程控制与函数/index.html" class="item ">
+        <a href="/about/" title="关于" class="icon-user-tie">&nbsp;关于</a>
+      </li>
+      
+      <li rel="/linux/2.2、shell编程(3)-流程控制与函数/index.html" class="item ">
+        <a href="/atom.xml" title="RSS" class="icon-rss">&nbsp;RSS</a>
+      </li>
+      
+    </ul>
+    <!-- 搜索框 -->
+    <div id="search-box">
+      <div class="icon"><span class="icon-search"></span></div>
+      <div class="input-box"><input type="text" id="search-input" v-model="queryText" @focus="searchInit" placeholder="站内搜索"/></div>
+      <!-- 搜索结果区 -->
+      <div id="search-result-box" >
+        <ul class="search-result-list" v-if="searchResult.length && !searchIniting">
+          <li v-for="(article,index) in searchResult" :key="index">
+            <a :href='article.url' class='search-result-title' target='_blank'>{{article.title || '无标题'}}</a>
+            <p class="search-result" v-html="article.matchContent"></p>
+          </li>
+        </ul>
+        <div style="text-align:center" v-else-if="searchIniting">
+          <img src="/img/loading.gif" style="width:30px;height:30px"/>
+        </div>
+        <!-- 无匹配时显示 -->
+        <p class="search-result" v-else>没有搜索到任何结果</p>
+      </div>
+    </div>
+    <div class="profile clearfix">
+      <div class="feeds fl">
+        
+        
+        <p class="links">
+          
+            <a href="https://github.com/sookie2010" target="_blank">Github</a>
+            |
+          
+            <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+            
+          
+        </p>
+        <p class="sns">
+          
+            <a href="https://weibo.com/2633013641" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+          
+            <a href="https://www.facebook.com/profile.php?id=100016469831631" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+          
+        </p>
+        
+      </div>
+      <div class="avatar fr">
+        <img src="https://i.loli.net/2018/05/04/5aeb37415a0dc.jpg" alt="avatar" title="Sookie">
+      </div>
+    </div>
+  </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>2.2、shell编程(3)-流程控制与函数</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        柠烟夏季 发表于
+        <time datetime="2018-03-05T16:52:22.000Z">2018-03-06 00:52</time>
+    </p>
+    <div class="post-content">
+        <h3 id="判断"><a href="#判断" class="headerlink" title="判断"></a>判断</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> condition1</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">  command1</span><br><span class="line"><span class="keyword">elif</span> condition2</span><br><span class="line"><span class="keyword">then</span> </span><br><span class="line">  command2</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  command3</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+<p>如果else没有语句执行<br>则不能留空 , 最好直接不写这个else<br><a id="more"></a><br>举例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ `ps ax | grep -c <span class="string">"ssh"</span>` -ge 1 ]</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">"RUNNING"</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"><span class="comment"># grep的-c参数代表对过滤后的行进行计数</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 也可以使用test命令做判断</span></span><br><span class="line"><span class="keyword">if</span> <span class="built_in">test</span> `ps ax | grep -c <span class="string">"ssh"</span>` -ge 1</span><br><span class="line"><span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">"RUNNING"</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h3><h4 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ((i=1 ; i&lt;=10 ; i++))</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="variable">$i</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="comment"># 注意使用(()), 里面的变量并不需要加$</span></span><br></pre></td></tr></table></figure>
+<p><code>for (( ; ; ))</code> - 死循环</p>
+<h5 id="foreach"><a href="#foreach" class="headerlink" title="foreach"></a>foreach</h5><p>bash支持对集合进行迭代的foreach类型语法<br>使用<code>for ... in ...</code><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># seq命令可以生成一个序列</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> `seq 1 10`</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="variable">$i</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 这样也是一个序列</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> &#123;1..10&#125;</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="variable">$i</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 迭代遍历一个数组</span></span><br><span class="line">arr=(<span class="string">"ab"</span> <span class="string">"cd"</span> <span class="string">"ef"</span>)</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> <span class="variable">$&#123;arr[@]&#125;</span></span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="variable">$item</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure></p>
+<p>如果一个命令返回的是一个集合 , 也可以执行循环迭代<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> `ls /usr/<span class="built_in">local</span>`</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="variable">$item</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure></p>
+<p>当然如果是找一个目录下的文件 , 也可以不用ls命令<br>for循环自带路径查找功能<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> /usr/<span class="built_in">local</span>/*</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="variable">$item</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"><span class="comment"># 注意路径不要加引号</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h4><p>while循环是在判断条件为false的时候结束循环<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cnt=1</span><br><span class="line"><span class="keyword">while</span> (( <span class="variable">$cnt</span>&lt;=5 ))</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="variable">$cnt</span></span><br><span class="line">  <span class="built_in">let</span> <span class="string">"cnt++"</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure></p>
+<p><code>while :</code>或者<code>while true</code>表示死循环</p>
+<h4 id="until循环"><a href="#until循环" class="headerlink" title="until循环"></a>until循环</h4><p>格式与while循环基本一致 , 只不过是当判断条件为true的时候结束循环<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cnt=1</span><br><span class="line">until (( <span class="variable">$cnt</span>&gt;=5 ))</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="variable">$cnt</span></span><br><span class="line">  <span class="built_in">let</span> <span class="string">"cnt++"</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="break与continue"><a href="#break与continue" class="headerlink" title="break与continue"></a>break与continue</h4><p>表示跳出循环以及继续下一次循环 , 与其他语言当中类似</p>
+<h3 id="多选择语句"><a href="#多选择语句" class="headerlink" title="多选择语句"></a>多选择语句</h3><p>类似其他语言当中的switch , bash当中使用case关键字<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">"input a number:"</span></span><br><span class="line"><span class="comment"># read表示从终端读取用户输入内容</span></span><br><span class="line"><span class="built_in">read</span> num</span><br><span class="line"><span class="keyword">case</span> <span class="variable">$num</span> <span class="keyword">in</span></span><br><span class="line">    1) <span class="built_in">echo</span> <span class="string">"数字1"</span></span><br><span class="line">    ;;</span><br><span class="line">    2) <span class="built_in">echo</span> <span class="string">"数字2"</span></span><br><span class="line">    ;;</span><br><span class="line">    3|4) <span class="built_in">echo</span> <span class="string">"3或者4"</span></span><br><span class="line">    ;;</span><br><span class="line">    ok) <span class="built_in">echo</span> <span class="string">"字符串ok"</span></span><br><span class="line">    ;;</span><br><span class="line">    *) <span class="built_in">echo</span> <span class="string">"其他内容"</span></span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>shell当中可以自定义函数<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">myFunc</span></span>() &#123;</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">"参数 <span class="variable">$1</span>,<span class="variable">$2</span>,<span class="variable">$3</span>"</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">"所有参数:"</span></span><br><span class="line">  <span class="keyword">for</span> arg <span class="keyword">in</span> <span class="variable">$@</span></span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="variable">$arg</span></span><br><span class="line">  <span class="keyword">done</span></span><br><span class="line">&#125;</span><br><span class="line">myFunc <span class="string">"aa"</span> <span class="string">"bb"</span></span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p><strong>说明</strong> : </p>
+<ol>
+<li>与获取脚本的参数类似 , 使用<code>$序号</code>或者<code>${序号}</code>来获取<br>但是如果到了10 , 就必须写作<code>${10}</code> , 否则会与$1产生歧义</li>
+<li><code>function</code> 关键字也可以省略</li>
+</ol>
+</blockquote>
+<h3 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h3><p>一个shell脚本当中可以引入另一个shell脚本<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">. /home/sookie/test2.sh</span><br><span class="line"><span class="comment"># 或者</span></span><br><span class="line"><span class="built_in">source</span> /home/sookie/test2.sh</span><br></pre></td></tr></table></figure></p>
+<p>被引入的文件并不需要可执行权限</p>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/linux/">linux</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/linux/" title="linux">linux</a> / 
+    
+        <a href="/tags/shell/" title="shell">shell</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      
+      <a href="javascript:void(0);" class="share-icon weibo" onclick="JELON.Utils.share('weibo')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qqzone" onclick="JELON.Utils.share('qqzone')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qq" onclick="JELON.Utils.share('qq')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon douban" onclick="JELON.Utils.share('douban')"></a>
+      
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/linux/2.3、shell(4)-使用技巧/">
+            
+                2.3、shell(4)-使用技巧
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/linux/2.0、shell编程(1)-初见/">
+            
+                2.0、shell编程(1)-初见
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: 'linux/2.2、shell编程(3)-流程控制与函数' || 'linux/2.2、shell编程(3)-流程控制与函数/',
+    owner: 'sookie2010',
+    repo: 'hexo_blog',
+    clientId: '90e8f648da2a669f7975',
+    clientSecret: '7d2b602616387748ef0df10f7a8a626bdfd1034c'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/Java/">Java</a>
+        <span class="badge">10</span>
+    </li>
+    
+    <li>
+        <a href="/categories/JavaScript/">JavaScript</a>
+        <span class="badge">14</span>
+    </li>
+    
+    <li>
+        <a href="/categories/MongoDB/">MongoDB</a>
+        <span class="badge">16</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Git/">Git</a>
+        <span class="badge">4</span>
+    </li>
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">11</span>
+    </li>
+    
+    <li>
+        <a href="/categories/前端杂烩/">前端杂烩</a>
+        <span class="badge">16</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 标签云 -->
+<div class="tags-cloud">
+<a href="/tags/ECMAScript6/" style="font-size: 19.33px; color: #b6668f">ECMAScript6</a> <a href="/tags/HTML5/" style="font-size: 14px; color: #e87474">HTML5</a> <a href="/tags/Hexo/" style="font-size: 15.78px; color: #d76f7d">Hexo</a> <a href="/tags/JavaScript/" style="font-size: 28.22px; color: #634fbc">JavaScript</a> <a href="/tags/MongoDB/" style="font-size: 30px; color: #524ac5">MongoDB</a> <a href="/tags/Promise/" style="font-size: 15.78px; color: #d76f7d">Promise</a> <a href="/tags/css/" style="font-size: 22.89px; color: #955da1">css</a> <a href="/tags/docker/" style="font-size: 17.56px; color: #c76b86">docker</a> <a href="/tags/git/" style="font-size: 19.33px; color: #b6668f">git</a> <a href="/tags/linux/" style="font-size: 24.67px; color: #8458aa">linux</a> <a href="/tags/maven/" style="font-size: 21.11px; color: #a56198">maven</a> <a href="/tags/opencv/" style="font-size: 14px; color: #e87474">opencv</a> <a href="/tags/prototype/" style="font-size: 15.78px; color: #d76f7d">prototype</a> <a href="/tags/sass/" style="font-size: 17.56px; color: #c76b86">sass</a> <a href="/tags/shell/" style="font-size: 19.33px; color: #b6668f">shell</a> <a href="/tags/函数/" style="font-size: 15.78px; color: #d76f7d">函数</a> <a href="/tags/前端/" style="font-size: 26.44px; color: #7353b3">前端</a> <a href="/tags/数据库/" style="font-size: 30px; color: #524ac5">数据库</a> <a href="/tags/模块化/" style="font-size: 15.78px; color: #d76f7d">模块化</a> <a href="/tags/版本控制/" style="font-size: 19.33px; color: #b6668f">版本控制</a> <a href="/tags/索引/" style="font-size: 19.33px; color: #b6668f">索引</a> <a href="/tags/线程/" style="font-size: 14px; color: #e87474">线程</a> <a href="/tags/集群/" style="font-size: 15.78px; color: #d76f7d">集群</a>
+</div>
+    </section>
+    
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章归档</strong></h3>
+        <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">2018年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">2018年04月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">2018年03月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">2018年02月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">2018年01月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">2017年12月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">2017年11月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">2017年10月</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">2017年09月</a><span class="archive-list-count">7</span></li></ul>
+    </section>
+    
+
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Power By Hexo</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <script src="/js/main.js"></script>
+<script src="/js/lib/polyfill.min.js"></script>
+<script src="/js/lib/vue.min.js"></script>
+<script src="/js/lib/axios.min.js"></script>
+<script src="/js/local-search.js"></script>
+</body>
+</html>

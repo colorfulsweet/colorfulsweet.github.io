@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>Hexo站点实现站内搜索 | Silence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="前端, Web, Java" >
+    <meta name="description" content="个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="Silence" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+  <section class="container header-main">
+    <div class="logo">
+      <a href="/">
+        <div class="cover">
+          <div class="name">Silence</div>
+          <div class="description">世上有条唯一的路，除了你无人能走</div>
+        </div>
+      </a>
+    </div>
+    <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+    <!-- 导航栏 -->
+    <ul class="menu hidden" id="JELON__menu">
+      
+      <li rel="/前端杂烩/Hexo站点实现站内搜索/index.html" class="item ">
+        <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+      </li>
+      
+      <li rel="/前端杂烩/Hexo站点实现站内搜索/index.html" class="item ">
+        <a href="/archives/" title="归档" class="icon-drawer">&nbsp;归档</a>
+      </li>
+      
+      <li rel="/前端杂烩/Hexo站点实现站内搜索/index.html" class="item ">
+        <a href="/about/" title="关于" class="icon-user-tie">&nbsp;关于</a>
+      </li>
+      
+      <li rel="/前端杂烩/Hexo站点实现站内搜索/index.html" class="item ">
+        <a href="/atom.xml" title="RSS" class="icon-rss">&nbsp;RSS</a>
+      </li>
+      
+    </ul>
+    <!-- 搜索框 -->
+    <div id="search-box">
+      <div class="icon"><span class="icon-search"></span></div>
+      <div class="input-box"><input type="text" id="search-input" v-model="queryText" @focus="searchInit" placeholder="站内搜索"/></div>
+      <!-- 搜索结果区 -->
+      <div id="search-result-box" >
+        <ul class="search-result-list" v-if="searchResult.length && !searchIniting">
+          <li v-for="(article,index) in searchResult" :key="index">
+            <a :href='article.url' class='search-result-title' target='_blank'>{{article.title || '无标题'}}</a>
+            <p class="search-result" v-html="article.matchContent"></p>
+          </li>
+        </ul>
+        <div style="text-align:center" v-else-if="searchIniting">
+          <img src="/img/loading.gif" style="width:30px;height:30px"/>
+        </div>
+        <!-- 无匹配时显示 -->
+        <p class="search-result" v-else>没有搜索到任何结果</p>
+      </div>
+    </div>
+    <div class="profile clearfix">
+      <div class="feeds fl">
+        
+        
+        <p class="links">
+          
+            <a href="https://github.com/sookie2010" target="_blank">Github</a>
+            |
+          
+            <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+            
+          
+        </p>
+        <p class="sns">
+          
+            <a href="https://weibo.com/2633013641" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+          
+            <a href="https://www.facebook.com/profile.php?id=100016469831631" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+          
+        </p>
+        
+      </div>
+      <div class="avatar fr">
+        <img src="https://i.loli.net/2018/05/04/5aeb37415a0dc.jpg" alt="avatar" title="Sookie">
+      </div>
+    </div>
+  </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>Hexo站点实现站内搜索</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        柠烟夏季 发表于
+        <time datetime="2018-01-09T06:44:53.000Z">2018-01-09 14:44</time>
+    </p>
+    <div class="post-content">
+        <p>在hexo博客中 , 可以添加站内文章搜索的支持<br>但是需要生成所有文章的索引<br>安装hexo官方提供的插件<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-generator-search --save</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>默认只索引post , 要索引所有文章 , 需要在_config.yml当中配置<br><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">search:</span></span><br><span class="line"><span class="attr">  path:</span> <span class="string">search.xml</span></span><br><span class="line"><span class="attr">  field:</span> <span class="string">all</span></span><br></pre></td></tr></table></figure></p>
+<p>之后访问<code>/search.xml</code>就可以获取到文章的索引了<br>大致是如下结构<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">search</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">entry</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>CSS布局(4)-grid<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"/文章URL地址/"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url</span>&gt;</span>/文章URL地址/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">content</span> <span class="attr">type</span>=<span class="string">"html"</span>&gt;</span></span><br><span class="line">    &lt;![CDATA[</span><br><span class="line">    &lt;p&gt;这里是文章内容&lt;/p&gt;</span><br><span class="line">    ]]&gt;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">content</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">categories</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">category</span>&gt;</span>分类1<span class="tag">&lt;/<span class="name">category</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">categories</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tags</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">tag</span>&gt;</span>标签1<span class="tag">&lt;/<span class="name">tag</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">tag</span>&gt;</span>标签2<span class="tag">&lt;/<span class="name">tag</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">tags</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">entry</span>&gt;</span></span><br><span class="line">  ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">search</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>其中的一个entry是一篇文章的信息<br>可以在JS当中使用ajax获取到这段XML文本 , 然后进行解析处理 , 从而做出站内搜索的功能<br>需要注意的是content部分是html文本 , 在处理当中需要把html标签去除</p>
+<p>以下是借助Vue实现的自动渲染搜索结果列表的代码<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"><span class="keyword">var</span> articleDatas = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">var</span> resultDiv = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">new</span> Vue(&#123;</span><br><span class="line">  el: <span class="string">"#search-box"</span>,</span><br><span class="line">  data: &#123;</span><br><span class="line">    queryText: <span class="literal">null</span>, <span class="comment">//搜索的关键字文本</span></span><br><span class="line">    searchResult: [] <span class="comment">//搜索结果</span></span><br><span class="line">  &#125;,</span><br><span class="line">  mounted: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    axios(&#123; <span class="comment">//调用ajax获取文章索引信息</span></span><br><span class="line">      url: <span class="string">"/search.xml"</span></span><br><span class="line">    &#125;).then(<span class="function"><span class="keyword">function</span>(<span class="params">response</span>)</span>&#123;</span><br><span class="line">      <span class="keyword">var</span> xmlDoms = <span class="literal">null</span></span><br><span class="line">      <span class="keyword">if</span>(<span class="built_in">window</span>.DOMParser) &#123;</span><br><span class="line">        <span class="keyword">var</span> parser = <span class="keyword">new</span> DOMParser()</span><br><span class="line">        xmlDoms = parser.parseFromString(response.data, <span class="string">"application/xml"</span>)</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123; <span class="comment">// IE浏览器</span></span><br><span class="line">        <span class="keyword">var</span> xmlDoc = <span class="keyword">new</span> ActiveXObject(<span class="string">"Microsoft.XMLDOM"</span>);</span><br><span class="line">        xmlDoc.async = <span class="literal">false</span>;</span><br><span class="line">        xmlDoms = xmlDoc.loadXML(response.data);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//找出所有文章的标题 正文 URL</span></span><br><span class="line">      articleDatas = <span class="built_in">Array</span>.prototype.map.call(xmlDoms.getElementsByTagName(<span class="string">"entry"</span>), <span class="function"><span class="keyword">function</span>(<span class="params">item</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">          title: item.getElementsByTagName(<span class="string">"title"</span>)[<span class="number">0</span>].innerHTML,</span><br><span class="line">          content: item.getElementsByTagName(<span class="string">"content"</span>)[<span class="number">0</span>].innerHTML,</span><br><span class="line">          url: item.getElementsByTagName(<span class="string">"url"</span>)[<span class="number">0</span>].innerHTML,</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">      resultDiv = <span class="built_in">document</span>.getElementById(<span class="string">"search-result-box"</span>)</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;,</span><br><span class="line">  watch: &#123;</span><br><span class="line">    queryText: <span class="function"><span class="keyword">function</span>(<span class="params">newVal, oldVal</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">this</span>.searchResult.length = <span class="number">0</span>;</span><br><span class="line">      <span class="comment">// 控制搜索结果框的显示与隐藏</span></span><br><span class="line">      <span class="keyword">if</span>(newVal &amp;&amp; newVal.trim() &amp;&amp; articleDatas) &#123;</span><br><span class="line">        resultDiv.style.display = <span class="string">"block"</span></span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        resultDiv.style.display = <span class="string">"none"</span></span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//多关键字分别匹配</span></span><br><span class="line">      <span class="keyword">var</span> keywords = newVal.trim().toLowerCase().split(<span class="regexp">/[\s\-]+/</span>);</span><br><span class="line">      <span class="keyword">var</span> _this = <span class="keyword">this</span>;</span><br><span class="line">      articleDatas.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">article</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">var</span> isMatch = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">var</span> title = article.title.trim().toLowerCase();</span><br><span class="line">        <span class="keyword">var</span> content = article.content.trim().replace(<span class="regexp">/&lt;[^&gt;]+&gt;/g</span>,<span class="string">""</span>).toLowerCase();</span><br><span class="line">        <span class="keyword">var</span> index_title = <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">var</span> index_content = <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">var</span> first_occur = <span class="number">-1</span>; <span class="comment">//关键字在正文当中第一次出现的位置</span></span><br><span class="line">        <span class="keyword">if</span>(title &amp;&amp; content) &#123;</span><br><span class="line">          keywords.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">keyword, i</span>) </span>&#123;</span><br><span class="line">            index_title = title.indexOf(keyword);</span><br><span class="line">            index_content = content.indexOf(keyword);</span><br><span class="line">            <span class="keyword">if</span>( index_title &lt; <span class="number">0</span> &amp;&amp; index_content &lt; <span class="number">0</span> )&#123;</span><br><span class="line">              isMatch = <span class="literal">false</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              <span class="keyword">if</span> (index_content &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                index_content = <span class="number">0</span>;</span><br><span class="line">              &#125;</span><br><span class="line">              <span class="keyword">if</span> (i == <span class="number">0</span>) &#123;</span><br><span class="line">                first_occur = index_content;</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (isMatch) &#123;</span><br><span class="line">          <span class="keyword">var</span> resultItem = &#123;&#125;;</span><br><span class="line">          resultItem.url = article.url;</span><br><span class="line">          resultItem.title = article.title;</span><br><span class="line">          <span class="keyword">if</span> (first_occur &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 截取关键字前后的一段文字</span></span><br><span class="line">            <span class="keyword">var</span> start = first_occur - <span class="number">6</span>;</span><br><span class="line">            <span class="keyword">var</span> end = first_occur + <span class="number">15</span>;</span><br><span class="line">            <span class="keyword">if</span>(start &lt; <span class="number">0</span>)&#123;</span><br><span class="line">              start = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(start == <span class="number">0</span>)&#123;</span><br><span class="line">              end = <span class="number">10</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(end &gt; content.length)&#123;</span><br><span class="line">              end = content.length;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">var</span> matchContent = content.substring(start, end); </span><br><span class="line">            <span class="comment">// 高亮关键字</span></span><br><span class="line">            keywords.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">keyword</span>)</span>&#123;</span><br><span class="line">              <span class="keyword">var</span> keywordReg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(keyword, <span class="string">"gi"</span>);</span><br><span class="line">              matchContent = matchContent.replace(keywordReg, <span class="string">"&lt;strong class=\"search-keyword\"&gt;"</span>+keyword+<span class="string">"&lt;/strong&gt;"</span>);</span><br><span class="line">            &#125;)</span><br><span class="line">            resultItem.matchContent = matchContent</span><br><span class="line">          &#125;</span><br><span class="line">          _this.searchResult.push(resultItem)</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure></p>
+<p>这里借助axios实现ajax请求 , 当然也可以用别的 , 或者使用原生的写法<br>然后在页面的适当位置中编写搜索input与搜索结果框的html<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"search-box"</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"icon"</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"icon-search"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"input-box"</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"search-input"</span> <span class="attr">v-model</span>=<span class="string">"queryText"</span> <span class="attr">placeholder</span>=<span class="string">"站内搜索"</span>/&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 搜索结果区 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"search-result-box"</span> &gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">"search-result-list"</span> <span class="attr">v-if</span>=<span class="string">"searchResult.length"</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">li</span> <span class="attr">v-for</span>=<span class="string">"(article,index) in searchResult"</span> <span class="attr">:key</span>=<span class="string">"index"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">a</span> <span class="attr">:href</span>=<span class="string">'article.url'</span> <span class="attr">class</span>=<span class="string">'search-result-title'</span> <span class="attr">target</span>=<span class="string">'_blank'</span>&gt;</span>&#123;&#123;article.title&#125;&#125;<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"search-result"</span> <span class="attr">v-html</span>=<span class="string">"article.matchContent"</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 无匹配时显示 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span> <span class="attr">class</span>=<span class="string">"search-result"</span> <span class="attr">v-else</span>&gt;</span>没有搜索到任何结果<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>之后编写相应的样式就可以了</p>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/前端杂烩/">前端杂烩</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/Hexo/" title="Hexo">Hexo</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      
+      <a href="javascript:void(0);" class="share-icon weibo" onclick="JELON.Utils.share('weibo')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qqzone" onclick="JELON.Utils.share('qqzone')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qq" onclick="JELON.Utils.share('qq')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon douban" onclick="JELON.Utils.share('douban')"></a>
+      
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="/MongoDB/4.0、安全验证/">
+            
+                4.0、安全验证
+            
+        </a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/前端杂烩/Hexo搭建个人博客/">
+            
+                Hexo搭建个人博客
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: '前端杂烩/Hexo站点实现站内搜索' || '前端杂烩/Hexo站点实现站内搜索/',
+    owner: 'sookie2010',
+    repo: 'hexo_blog',
+    clientId: '90e8f648da2a669f7975',
+    clientSecret: '7d2b602616387748ef0df10f7a8a626bdfd1034c'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/Java/">Java</a>
+        <span class="badge">10</span>
+    </li>
+    
+    <li>
+        <a href="/categories/JavaScript/">JavaScript</a>
+        <span class="badge">14</span>
+    </li>
+    
+    <li>
+        <a href="/categories/MongoDB/">MongoDB</a>
+        <span class="badge">16</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Git/">Git</a>
+        <span class="badge">4</span>
+    </li>
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">11</span>
+    </li>
+    
+    <li>
+        <a href="/categories/前端杂烩/">前端杂烩</a>
+        <span class="badge">16</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 标签云 -->
+<div class="tags-cloud">
+<a href="/tags/ECMAScript6/" style="font-size: 19.33px; color: #b6668f">ECMAScript6</a> <a href="/tags/HTML5/" style="font-size: 14px; color: #e87474">HTML5</a> <a href="/tags/Hexo/" style="font-size: 15.78px; color: #d76f7d">Hexo</a> <a href="/tags/JavaScript/" style="font-size: 28.22px; color: #634fbc">JavaScript</a> <a href="/tags/MongoDB/" style="font-size: 30px; color: #524ac5">MongoDB</a> <a href="/tags/Promise/" style="font-size: 15.78px; color: #d76f7d">Promise</a> <a href="/tags/css/" style="font-size: 22.89px; color: #955da1">css</a> <a href="/tags/docker/" style="font-size: 17.56px; color: #c76b86">docker</a> <a href="/tags/git/" style="font-size: 19.33px; color: #b6668f">git</a> <a href="/tags/linux/" style="font-size: 24.67px; color: #8458aa">linux</a> <a href="/tags/maven/" style="font-size: 21.11px; color: #a56198">maven</a> <a href="/tags/opencv/" style="font-size: 14px; color: #e87474">opencv</a> <a href="/tags/prototype/" style="font-size: 15.78px; color: #d76f7d">prototype</a> <a href="/tags/sass/" style="font-size: 17.56px; color: #c76b86">sass</a> <a href="/tags/shell/" style="font-size: 19.33px; color: #b6668f">shell</a> <a href="/tags/函数/" style="font-size: 15.78px; color: #d76f7d">函数</a> <a href="/tags/前端/" style="font-size: 26.44px; color: #7353b3">前端</a> <a href="/tags/数据库/" style="font-size: 30px; color: #524ac5">数据库</a> <a href="/tags/模块化/" style="font-size: 15.78px; color: #d76f7d">模块化</a> <a href="/tags/版本控制/" style="font-size: 19.33px; color: #b6668f">版本控制</a> <a href="/tags/索引/" style="font-size: 19.33px; color: #b6668f">索引</a> <a href="/tags/线程/" style="font-size: 14px; color: #e87474">线程</a> <a href="/tags/集群/" style="font-size: 15.78px; color: #d76f7d">集群</a>
+</div>
+    </section>
+    
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章归档</strong></h3>
+        <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">2018年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">2018年04月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">2018年03月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">2018年02月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">2018年01月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">2017年12月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">2017年11月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">2017年10月</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">2017年09月</a><span class="archive-list-count">7</span></li></ul>
+    </section>
+    
+
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Power By Hexo</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <script src="/js/main.js"></script>
+<script src="/js/lib/polyfill.min.js"></script>
+<script src="/js/lib/vue.min.js"></script>
+<script src="/js/lib/axios.min.js"></script>
+<script src="/js/local-search.js"></script>
+</body>
+</html>

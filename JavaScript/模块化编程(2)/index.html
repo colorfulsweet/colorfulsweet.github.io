@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" >
+    <meta http-equiv="X-UA-Compatible" content="IE=11,IE=10,IE=9,IE=8" >
+    <meta name="baidu-site-verification" content="dIcXMeY8Ya" />
+    
+    <title>模块化编程(2) | Silence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" >
+    <meta name="keywords" content="前端, Web, Java" >
+    <meta name="description" content="个人前端小站" >
+
+    
+    <link rel="alternative" href="/atom.xml" title="Silence" type="application/atom+xml" >
+    
+    
+    <link rel="shortcut icon" href="/favicon.ico" >
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <!--[if lt IE 9]>
+    <script src="/js/html5.js"></script>
+    <![endif]-->
+    
+
+</head>
+
+<body class="home">
+    <!--[if lt IE 9]>
+    <div class="browsehappy">
+        当前网页 <strong>不支持</strong>
+        你正在使用的浏览器. 为了正常的访问, 请 <a href="http://browsehappy.com/">升级你的浏览器</a>.
+    </div>
+    <![endif]-->
+
+    <!-- 博客头部 -->
+    <header class="header">
+  <section class="container header-main">
+    <div class="logo">
+      <a href="/">
+        <div class="cover">
+          <div class="name">Silence</div>
+          <div class="description">世上有条唯一的路，除了你无人能走</div>
+        </div>
+      </a>
+    </div>
+    <div class="dropnav icon-paragraph-justify" id="JELON__btnDropNav"></div>
+    <!-- 导航栏 -->
+    <ul class="menu hidden" id="JELON__menu">
+      
+      <li rel="/JavaScript/模块化编程(2)/index.html" class="item ">
+        <a href="/" title="首页" class="icon-home">&nbsp;首页</a>
+      </li>
+      
+      <li rel="/JavaScript/模块化编程(2)/index.html" class="item ">
+        <a href="/archives/" title="归档" class="icon-drawer">&nbsp;归档</a>
+      </li>
+      
+      <li rel="/JavaScript/模块化编程(2)/index.html" class="item ">
+        <a href="/about/" title="关于" class="icon-user-tie">&nbsp;关于</a>
+      </li>
+      
+      <li rel="/JavaScript/模块化编程(2)/index.html" class="item ">
+        <a href="/atom.xml" title="RSS" class="icon-rss">&nbsp;RSS</a>
+      </li>
+      
+    </ul>
+    <!-- 搜索框 -->
+    <div id="search-box">
+      <div class="icon"><span class="icon-search"></span></div>
+      <div class="input-box"><input type="text" id="search-input" v-model="queryText" @focus="searchInit" placeholder="站内搜索"/></div>
+      <!-- 搜索结果区 -->
+      <div id="search-result-box" >
+        <ul class="search-result-list" v-if="searchResult.length && !searchIniting">
+          <li v-for="(article,index) in searchResult" :key="index">
+            <a :href='article.url' class='search-result-title' target='_blank'>{{article.title || '无标题'}}</a>
+            <p class="search-result" v-html="article.matchContent"></p>
+          </li>
+        </ul>
+        <div style="text-align:center" v-else-if="searchIniting">
+          <img src="/img/loading.gif" style="width:30px;height:30px"/>
+        </div>
+        <!-- 无匹配时显示 -->
+        <p class="search-result" v-else>没有搜索到任何结果</p>
+      </div>
+    </div>
+    <div class="profile clearfix">
+      <div class="feeds fl">
+        
+        
+        <p class="links">
+          
+            <a href="https://github.com/sookie2010" target="_blank">Github</a>
+            |
+          
+            <a href="https://pages.coding.me" target="_blank">Hosted by Coding Pages</a>
+            
+          
+        </p>
+        <p class="sns">
+          
+            <a href="https://weibo.com/2633013641" class="sinaweibo" target="_blank"><b>■</b> 新浪微博</a>
+          
+            <a href="https://www.facebook.com/profile.php?id=100016469831631" class="qqweibo" target="_blank"><b>■</b> Facebook</a>
+          
+        </p>
+        
+      </div>
+      <div class="avatar fr">
+        <img src="https://i.loli.net/2018/05/04/5aeb37415a0dc.jpg" alt="avatar" title="Sookie">
+      </div>
+    </div>
+  </section>
+</header>
+
+
+    <!-- 博客正文 -->
+    <div class="container body clearfix">
+        <section class="content">
+            <div class="content-main widget">
+                <!-- 文章页 -->
+<!-- 文章 -->
+<article class="post article">
+    <header class="text-center">
+        <h3 class="post-title"><span>模块化编程(2)</span></h3>
+    </header>
+    <p class="post-meta text-center">
+        柠烟夏季 发表于
+        <time datetime="2018-05-06T12:19:42.000Z">2018-05-06 20:19</time>
+    </p>
+    <div class="post-content">
+        <p>模块存在的价值是为了能够更方便地复用代码 , 更加有利于功能的封装<br>但是如果要实现的话 , 就必须要求每个人都按照同样的方式去编写模块<br>目前通行的JavaScript模块规范有两种 , 分别是<code>CommonJS</code>和<code>AMD</code><br><a id="more"></a></p>
+<h3 id="CommonJS"><a href="#CommonJS" class="headerlink" title="CommonJS"></a>CommonJS</h3><p>从node.js出现之后 , 将JavaScript用于服务器编程<br>同时也标志着JS的模块化编程正式诞生<br>在网页环境下 , 没有模块也不是特别大的问题 , 因为网页程序的复杂性和规模都相对有限 , 但是在服务器端就必须要有模块 , 否则服务器端程序就会难以扩展和维护</p>
+<p>nodejs的模块系统 , 就是按照CommonJS规范实现的<br>这个规范当中 , 有一个全局方法 <code>require</code> , 用于加载模块</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> mod1 = <span class="built_in">require</span>(<span class="string">"module1"</span>);</span><br><span class="line">mod1.biz();</span><br></pre></td></tr></table></figure>
+<h3 id="AMD"><a href="#AMD" class="headerlink" title="AMD"></a>AMD</h3><p>有了在服务端可用的模块化编程方式 , 大家很自然就想要在客户端也能实现的方式 , 并且最好能够兼容<br>这样同样的一个模块的代码 , 不用修改任何内容就可以同时应用于服务端和客户端</p>
+<p>但是如果直接套用在nodejs当中的实现方式 , 就会存在线程阻塞的问题<br>也就是必须要等require方法执行完毕 , 加载运行这个模块的代码之后 , 后面的代码才会被执行<br>对于服务端来说 , 这并不是什么问题 , 因为代码都在本地 , 不可能出现长期阻塞的问题<br>但是对于客户端来说 , js文件需要发送http请求去获取 , 所以同步加载的方式就十分影响性能了</p>
+<p>AMD ( Asynchronous Module Definition <code>异步模块定义</code> ) , 这种规范的要求是采用异步方式加载模块<br>形式如下 :<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">"module1"</span>], <span class="function"><span class="keyword">function</span>(<span class="params">mod</span>) </span>&#123;</span><br><span class="line">  mod.biz();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>规范只是约定一种形式 , 具体要应用的话需要有对应的库来实现<br>这里通过<code>require.js</code>来介绍</p>
+<h3 id="require-js"><a href="#require-js" class="headerlink" title="require.js"></a>require.js</h3><p><a href="http://www.requirejs.cn/" target="_blank" rel="noopener">require.js官网</a></p>
+<p>require.js主要解决两个问题</p>
+<ol>
+<li>实现js文件的异步加载 , 避免网页失去响应</li>
+<li>管理模块之间的依赖性 , 便于代码的编写和维护</li>
+</ol>
+<p>使用require.js需要指定一个主模块 , 以及在主模块中可以去引入若干个子模块 , 主模块相当于是程序执行的入口<br>( 如果没有子模块的话就不需要require.js了 )</p>
+<p>目录结构<br><img src="/images/JavaScript/modules.png" alt="require demo"></p>
+<h4 id="data-main入口点"><a href="#data-main入口点" class="headerlink" title="data-main入口点"></a>data-main入口点</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"js/require.js"</span> <span class="attr">data-main</span>=<span class="string">"js/main"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>js目录下的main.js就是作为主模块 , 后面的.js可以省略</p>
+<h4 id="子模块的编写方式"><a href="#子模块的编写方式" class="headerlink" title="子模块的编写方式"></a>子模块的编写方式</h4><p>require.js加载的模块 , 采用AMD规范 , 也就是说模块必须按照AMD的规范来写<br>模块必须采用特定的define函数来定义<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//module1.js</span></span><br><span class="line">define(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    biz : <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">"子模块的方法"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<p>这个函数返回的对象就是这个模块需要暴露出的对象</p>
+<p>如果该模块需要依赖其他模块<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//module2.js</span></span><br><span class="line">define([<span class="string">"module1"</span>],<span class="function"><span class="keyword">function</span>(<span class="params">mod1</span>)</span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">biz2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mod1.biz() + <span class="string">"ok"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    biz : biz2</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<h4 id="主模块的编写方式"><a href="#主模块的编写方式" class="headerlink" title="主模块的编写方式"></a>主模块的编写方式</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.js</span></span><br><span class="line"><span class="built_in">require</span>([<span class="string">"modules/module1"</span>,<span class="string">"modules/module2"</span>], </span><br><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params">mod1,mod2</span>)</span>&#123;</span><br><span class="line">  <span class="comment">//mod1和mod2分别是在子模块中暴露出的对象</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>require函数接受两个参数 , 第一个参数是子模块的相对路径和名称 ( 如果在同一个路径下可以不加路径 ) , <strong>必须是一个数组</strong><br>第二个参数是子模块加载完成之后执行的回调函数</p>
+<font color="blueviolet">更加灵活的自定义加载</font>
+
+<p>模块的引入采用的是子模块的js文件与主模块文件的相对位置<br>如果要加在的子模块较多 , 这么相对路径就需要加在每个子模块的前面<br>为了更清晰一些 , 我们可以采用下面的方式<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>.config(&#123;</span><br><span class="line"><span class="comment">//注意这里的baseUrl是相对于引入主模块的页面的路径</span></span><br><span class="line"><span class="comment">//页面是 /require_demo/test.html</span></span><br><span class="line"><span class="comment">//子模块位于 /require_demo/other/module3.js</span></span><br><span class="line">  baseUrl : <span class="string">"./other/"</span>,</span><br><span class="line">  paths : &#123;</span><br><span class="line">    mod3 : <span class="string">"module3"</span>,</span><br><span class="line">    mod4 : <span class="string">"module4"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">//上面的代码相当于对子模块的路径创建了映射</span></span><br><span class="line"><span class="comment">//下面才是真正引入模块</span></span><br><span class="line"><span class="built_in">require</span>([<span class="string">"mod3"</span>,<span class="string">"mod4"</span>], <span class="function"><span class="keyword">function</span>(<span class="params">mod3, mod4</span>)</span>&#123;</span><br><span class="line">  mod3.biz3();</span><br><span class="line">  mod4.biz4();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>上面的写法其实就等价于<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>([<span class="string">"../other/module3"</span>,<span class="string">"../other/module4"</span>],</span><br><span class="line"><span class="function"><span class="keyword">function</span>(<span class="params">mod3, mod4</span>)</span>&#123;</span><br><span class="line">  mod3.biz3();</span><br><span class="line">  mod4.biz4();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>paths里面也可以直接使用完整的网络URL地址</p>
+</blockquote>
+<h4 id="加载非规范的模块"><a href="#加载非规范的模块" class="headerlink" title="加载非规范的模块"></a>加载非规范的模块</h4><p>采用上面的方式去加载的子模块 , 模块当中必须按照AMD的规范去写<br>如果子模块本身并不符合这个要求<br>在不方便修改子模块的情况下 , 我们可以采用如下的方式去加载</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">require</span>.config(&#123;</span><br><span class="line">  shim : &#123;</span><br><span class="line">    underscore : &#123;</span><br><span class="line">      exports : <span class="string">"_"</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  paths : &#123; <span class="comment">//这部分并没有什么差别</span></span><br><span class="line">    underscore : <span class="string">"./plugins/underscore"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">require</span>([<span class="string">"underscore"</span>], <span class="function"><span class="keyword">function</span>(<span class="params">_</span>) </span>&#123;</span><br><span class="line">  <span class="comment">//测试代码</span></span><br><span class="line">  _.each([<span class="number">1</span>,<span class="number">10</span>,<span class="number">20</span>],<span class="built_in">console</span>.log);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>未按照AMD规范编写的模块 , 通常采用的是暴露出一个变量放入到window当中作为全局变量 , 比如underscore这个库 , 暴露出的就是<code>_</code></p>
+<h5 id="模块依赖性声明"><a href="#模块依赖性声明" class="headerlink" title="模块依赖性声明"></a>模块依赖性声明</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">shim : &#123;</span><br><span class="line">  <span class="string">"jquery.scroll"</span> : &#123;</span><br><span class="line">    deps : [<span class="string">"jquery"</span>],</span><br><span class="line">    exports : <span class="string">"jQuery.fn.scroll"</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+    <p class="post-meta">
+        <span class="post-cat">分类：
+            <a class="cat-link" href="/categories/JavaScript/">JavaScript</a>
+        </span>
+        <span class="post-tags">
+            标签：
+            
+    
+        <a href="/tags/JavaScript/" title="JavaScript">JavaScript</a> / 
+    
+        <a href="/tags/模块化/" title="模块化">模块化</a>
+    
+
+        </span>
+    </p>
+</article>
+<!-- 分享按钮 -->
+
+  <div class="article-share clearfix text-center">
+    <div class="share-area">
+      <span class="share-txt">分享到：</span>
+      
+      <a href="javascript:void(0);" class="share-icon weibo" onclick="JELON.Utils.share('weibo')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qqzone" onclick="JELON.Utils.share('qqzone')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon qq" onclick="JELON.Utils.share('qq')"></a>
+      
+      <a href="javascript:void(0);" class="share-icon douban" onclick="JELON.Utils.share('douban')"></a>
+      
+    </div>
+  </div>
+
+
+<!-- 上一篇/下一篇 -->
+
+<div class="article-nav clearfix">
+    
+    <span class="prev fl">
+        上一篇<br >
+        <a href="javascript: void(0);">没有上一篇了</a>
+    </span>
+    
+
+    
+    <span class="next fr">
+        下一篇<br >
+        <a href="/JavaScript/模块化编程(1)/">
+            
+                模块化编程(1)
+            
+        </a>
+    </span>
+    
+</div>
+
+<!-- 文章评论 -->
+
+  <script src="/js/comment.js"></script>
+  <div id="comments" class="comment">
+    <!--
+    <div class="sign-bar">
+      GitHub 已登录!
+      <span class="sign-link">登出</span>
+    </div>
+    <section class="box">
+      <div class="com-avatar"><img src="/img/jelon.jpg" alt="avatar"></div>
+      <div class="com-text">
+        <div class="main">
+          <textarea class="text-area-edited show" placeholder="欢迎评论！"></textarea>
+          <div class="text-area-preview"></div>
+        </div>
+        <div class="switch">
+          <div class="switch-item on">编辑</div>
+          <div class="switch-item">预览</div>
+        </div>
+        <div class="button">提交</div>
+      </div>
+    </section>
+    <section class="tips">注：评论支持 markdown 语法！</section>
+    <section class="list-wrap">
+      <ul class="list">
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">张德龙</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like liked">已赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">333333</div>
+          </div>
+        </li>
+        <li>
+          <div class="user-avatar">
+            <a href="/">
+              <img src="/img/jelon.jpg" alt="user-avatar">
+            </a>
+          </div>
+          <div class="user-comment">
+            <div class="user-comment-header">
+              <span class="post-name">刘德华</span>
+              <span class="post-time">2017年12月12日</span>
+              <span class="like">点赞</span>
+              <span class="like-num">2</span>
+            </div>
+            <div class="user-comment-body">vvvvv</div>
+          </div>
+        </li>
+      </ul>
+      <div class="page-nav">
+        <a href="javascript: void(0);" class="item">1</a>
+        <a href="javascript: void(0);" class="item">2</a>
+        <a href="javascript: void(0);" class="item current">3</a>
+      </div>
+    </section>
+    -->
+  </div>
+  <script>
+  JELON.Comment({
+    container: 'comments',
+    label: 'JavaScript/模块化编程(2)' || 'JavaScript/模块化编程(2)/',
+    owner: 'sookie2010',
+    repo: 'hexo_blog',
+    clientId: '90e8f648da2a669f7975',
+    clientSecret: '7d2b602616387748ef0df10f7a8a626bdfd1034c'
+  });
+  </script>
+
+
+            </div>
+
+        </section>
+        <!-- 侧栏部分 -->
+<aside class="sidebar">
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章分类</strong></h3>
+        <!-- 文章分类 -->
+<ul class="widget-bd">
+    
+    <li>
+        <a href="/categories/Java/">Java</a>
+        <span class="badge">10</span>
+    </li>
+    
+    <li>
+        <a href="/categories/JavaScript/">JavaScript</a>
+        <span class="badge">14</span>
+    </li>
+    
+    <li>
+        <a href="/categories/MongoDB/">MongoDB</a>
+        <span class="badge">16</span>
+    </li>
+    
+    <li>
+        <a href="/categories/Git/">Git</a>
+        <span class="badge">4</span>
+    </li>
+    
+    <li>
+        <a href="/categories/linux/">linux</a>
+        <span class="badge">11</span>
+    </li>
+    
+    <li>
+        <a href="/categories/前端杂烩/">前端杂烩</a>
+        <span class="badge">16</span>
+    </li>
+    
+</ul>
+    </section>
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>热门标签</strong></h3>
+        <!-- 标签云 -->
+<div class="tags-cloud">
+<a href="/tags/ECMAScript6/" style="font-size: 19.33px; color: #b6668f">ECMAScript6</a> <a href="/tags/HTML5/" style="font-size: 14px; color: #e87474">HTML5</a> <a href="/tags/Hexo/" style="font-size: 15.78px; color: #d76f7d">Hexo</a> <a href="/tags/JavaScript/" style="font-size: 28.22px; color: #634fbc">JavaScript</a> <a href="/tags/MongoDB/" style="font-size: 30px; color: #524ac5">MongoDB</a> <a href="/tags/Promise/" style="font-size: 15.78px; color: #d76f7d">Promise</a> <a href="/tags/css/" style="font-size: 22.89px; color: #955da1">css</a> <a href="/tags/docker/" style="font-size: 17.56px; color: #c76b86">docker</a> <a href="/tags/git/" style="font-size: 19.33px; color: #b6668f">git</a> <a href="/tags/linux/" style="font-size: 24.67px; color: #8458aa">linux</a> <a href="/tags/maven/" style="font-size: 21.11px; color: #a56198">maven</a> <a href="/tags/opencv/" style="font-size: 14px; color: #e87474">opencv</a> <a href="/tags/prototype/" style="font-size: 15.78px; color: #d76f7d">prototype</a> <a href="/tags/sass/" style="font-size: 17.56px; color: #c76b86">sass</a> <a href="/tags/shell/" style="font-size: 19.33px; color: #b6668f">shell</a> <a href="/tags/函数/" style="font-size: 15.78px; color: #d76f7d">函数</a> <a href="/tags/前端/" style="font-size: 26.44px; color: #7353b3">前端</a> <a href="/tags/数据库/" style="font-size: 30px; color: #524ac5">数据库</a> <a href="/tags/模块化/" style="font-size: 15.78px; color: #d76f7d">模块化</a> <a href="/tags/版本控制/" style="font-size: 19.33px; color: #b6668f">版本控制</a> <a href="/tags/索引/" style="font-size: 19.33px; color: #b6668f">索引</a> <a href="/tags/线程/" style="font-size: 14px; color: #e87474">线程</a> <a href="/tags/集群/" style="font-size: 15.78px; color: #d76f7d">集群</a>
+</div>
+    </section>
+    
+
+    
+    <section class="widget">
+        <h3 class="widget-hd"><strong>文章归档</strong></h3>
+        <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/05/">2018年05月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">2018年04月</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">2018年03月</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">2018年02月</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">2018年01月</a><span class="archive-list-count">14</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">2017年12月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">2017年11月</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">2017年10月</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">2017年09月</a><span class="archive-list-count">7</span></li></ul>
+    </section>
+    
+
+    
+</aside>
+<!-- / 侧栏部分 -->
+    </div>
+
+    <!-- 博客底部 -->
+    <footer class="footer">
+    &copy;
+    
+        2016-2018
+    
+
+    <a href="/">Power By Hexo</a>
+</footer>
+<div class="back-to-top" id="JELON__backToTop" title="返回顶部">返回顶部</div>
+
+    <!--博客js脚本 -->
+    <script src="/js/main.js"></script>
+<script src="/js/lib/polyfill.min.js"></script>
+<script src="/js/lib/vue.min.js"></script>
+<script src="/js/lib/axios.min.js"></script>
+<script src="/js/local-search.js"></script>
+</body>
+</html>
